@@ -10,20 +10,27 @@ public class TcpClient implements Client{
     private Socket clientSocket;
     private PrintWriter output;
     private BufferedReader input;
+    private final String ip;
+    private final int port;
+
+    public TcpClient(String ip, int port){
+        this.ip  = ip;
+        this.port = port;
+        startConnection(ip,port);
+    }
 
     @Override
     public void run() {
         while (true) {
             try {
-                String receivedMessage = input.readLine();
-                System.out.println(receivedMessage);
+                receiveMessage();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public void startConnection(String ip, int port) {
+    private void startConnection(String ip, int port) {
         try {
             clientSocket = new Socket(ip, port);
             output = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -31,6 +38,12 @@ public class TcpClient implements Client{
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    private void receiveMessage() throws IOException {
+        input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        String message = input.readLine();
+        System.out.println(message);
+        //     output.println(message);
     }
 
     public void sendMessage(String msg) {
