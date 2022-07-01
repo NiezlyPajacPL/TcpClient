@@ -1,4 +1,4 @@
 package network;
 
-public interface Client {
+public interface Client extends Runnable{
 }

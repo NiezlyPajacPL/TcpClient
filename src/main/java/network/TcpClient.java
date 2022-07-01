@@ -11,6 +11,18 @@ public class TcpClient implements Client{
     private PrintWriter output;
     private BufferedReader input;
 
+    @Override
+    public void run() {
+        while (true) {
+            try {
+                String receivedMessage = input.readLine();
+                System.out.println(receivedMessage);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public void startConnection(String ip, int port) {
         try {
             clientSocket = new Socket(ip, port);
@@ -21,15 +33,8 @@ public class TcpClient implements Client{
         }
     }
 
-    public String sendMessage(String msg) {
-        String resp = null;
-        try {
-            output.println(msg);
-            resp = input.readLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return resp;
+    public void sendMessage(String msg) {
+        output.println(msg);
     }
 
     public void stopConnection() {
@@ -41,4 +46,5 @@ public class TcpClient implements Client{
             e.printStackTrace();
         }
     }
+
 }
