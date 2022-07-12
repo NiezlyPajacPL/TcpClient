@@ -19,14 +19,14 @@ public class TcpClient implements Client{
     private final int port;
     private boolean clientLoggedIn = false;
 
-    public TcpClient(String ip, int port){
-        this.ip  = ip;
+    public TcpClient(String ip, int port) {
+        this.ip = ip;
         this.port = port;
     }
 
     @Override
     public void run() {
-        startConnection(ip,port);
+        startConnection(ip, port);
         while (true) {
             if (!clientSocket.isClosed()) {
                 receiveMessage();
@@ -39,24 +39,26 @@ public class TcpClient implements Client{
     private void startConnection(String ip, int port) {
         try {
             clientSocket = new Socket(ip, port);
-            clientSocket.setSoTimeout(50000);
         } catch (IOException e) {
-            System.out.println("There are problems with connecting to the server. Trying again.");
+            SubtitlesPrinter.printConnectionProblems();
             tryReconnecting();
         }
     }
 
     @Override
-    public void receiveMessage(){
+    public void receiveMessage() {
         try {
             serverReceivedInput = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             String message = serverReceivedInput.readLine();
             clientIsLogged(message);
-            System.out.println(message);
+            SubtitlesPrinter.printReceivedMessage(message);
         } catch (IOException e) {
-            e.printStackTrace();
+            SubtitlesPrinter.printLostConnection();
+            clientLoggedIn = false;
+            tryReconnecting();
         }
     }
+
     @Override
     public void sendMessage(String msg) {
         try {
@@ -66,6 +68,7 @@ public class TcpClient implements Client{
             e.printStackTrace();
         }
     }
+
     @Override
     public void stopConnection() {
         try {
@@ -77,16 +80,16 @@ public class TcpClient implements Client{
         }
     }
 
-    private void tryReconnecting(){
-        try{
+    private void tryReconnecting() {
+        try {
             System.gc();
             clientSocket = new Socket(ip, port);
-            System.out.println("Connection successfully established.");
+            SubtitlesPrinter.printConnectionEstablished();
             SubtitlesPrinter.printEnter(5);
             SubtitlesPrinter.printRegistrationRequest();
-            SubtitlesPrinter.printHelper();
+            SubtitlesPrinter.printIsHelpNeeded();
         } catch (IOException e) {
-            System.out.println("Reconnecting was not successful. Trying again in 5 seconds");
+            SubtitlesPrinter.printReconnectingUnsuccessful();
             try {
                 sleep(5000);
                 tryReconnecting();

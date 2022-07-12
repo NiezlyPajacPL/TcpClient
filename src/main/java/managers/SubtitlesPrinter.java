@@ -23,13 +23,17 @@ public final class SubtitlesPrinter {
         println("or if you already have existing account Type '/login <YourNickname> <Password> ");
     }
 
-    public static void printErrorClientNotLogged(){println("You need to log in first!");}
-
     public static void printErrorMessageTooLarge(){print("Your message is too long.");}
 
-    public static void printErrorWrongCommand(){println("You've typed the command wrongly.");}
+    public static void printReceivedMessage(String message){println(message);}
 
-    public static void printErrorClientIsLogged(){println("You are already logged in.");}
+    public static void printLostConnection(){println("Lost connection with server. Trying to reconnect.");}
+
+    public static void printConnectionProblems(){println("There are problems with connecting to the server. Trying again.");}
+
+    public static void printReconnectingUnsuccessful(){println("Reconnecting was not successful. Trying again in 5 seconds");}
+
+    public static void printConnectionEstablished(){println("Connection successfully established.");}
 
     public static void printErrorSomethingWentWrong(){println("Something went wrong.");}
 
@@ -38,5 +42,4 @@ public final class SubtitlesPrinter {
     private static void println(String text){System.out.println(text);}
 
     private static void print(String text){System.out.print(text);}
-
 }

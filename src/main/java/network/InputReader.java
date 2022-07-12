@@ -12,10 +12,9 @@ public class InputReader extends Thread {
     final String HELP = "/help";
     final String LOGOUT = "/logout";
 
-    public InputReader(Scanner scan, Client client, SubtitlesPrinter subtitlesPrinter) {
+    public InputReader(Scanner scan, Client client) {
         this.scan = scan;
         this.client = client;
-        this.subtitlesPrinter = subtitlesPrinter;
     }
 
     @Override

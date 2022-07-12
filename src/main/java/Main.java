@@ -12,7 +12,6 @@ public class Main {
         final String CONNECTION_IP = "127.0.0.1";
         final int CONNECTION_PORT = 4445;
 
-        SubtitlesPrinter subtitlesPrinter = new SubtitlesPrinter();
         Scanner scan = new Scanner(System.in);
         Client client = new TcpClient(CONNECTION_IP,CONNECTION_PORT);
         Thread clientThread = new Thread(client);
@@ -20,7 +19,7 @@ public class Main {
         SubtitlesPrinter.printRegistrationRequest();
         SubtitlesPrinter.printIsHelpNeeded();
 
-        InputReader inputReader = new InputReader(scan,client,subtitlesPrinter);
+        InputReader inputReader = new InputReader(scan,client);
         inputReader.start();
     }
 }
