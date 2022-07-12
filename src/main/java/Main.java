@@ -1,4 +1,6 @@
+import managers.SubtitlesPrinter;
 import network.Client;
+import network.InputReader;
 import network.TcpClient;
 
 import java.util.Objects;
@@ -7,17 +9,18 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[]args){
+        final String CONNECTION_IP = "127.0.0.1";
+        final int CONNECTION_PORT = 4445;
+
+        SubtitlesPrinter subtitlesPrinter = new SubtitlesPrinter();
         Scanner scan = new Scanner(System.in);
+        Client client = new TcpClient(CONNECTION_IP,CONNECTION_PORT);
+        Thread clientThread = new Thread(client);
+        clientThread.start();
+        SubtitlesPrinter.printRegistrationRequest();
+        SubtitlesPrinter.printIsHelpNeeded();
 
-        TcpClient tcpClient = new TcpClient("127.0.0.1",5000);
-        System.out.println("client started");
-        Thread thread = new Thread(tcpClient);
-        thread.start();
- //       String response = tcpClient.sendMessage("hello server");
-        while (true) {
-            String message = scan.nextLine();
-            tcpClient.sendMessage(message);
-        }
-
+        InputReader inputReader = new InputReader(scan,client,subtitlesPrinter);
+        inputReader.start();
     }
 }

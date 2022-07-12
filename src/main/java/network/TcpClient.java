@@ -1,31 +1,37 @@
 package network;
 
+import managers.SubtitlesPrinter;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Objects;
+
+import static java.lang.Thread.sleep;
 
 public class TcpClient implements Client{
     private Socket clientSocket;
-    private PrintWriter output;
-    private BufferedReader input;
+    private PrintWriter serverPrintWriter;
+    private BufferedReader serverReceivedInput;
     private final String ip;
     private final int port;
+    private boolean clientLoggedIn = false;
 
     public TcpClient(String ip, int port){
         this.ip  = ip;
         this.port = port;
-        startConnection(ip,port);
     }
 
     @Override
     public void run() {
+        startConnection(ip,port);
         while (true) {
-            try {
+            if (!clientSocket.isClosed()) {
                 receiveMessage();
-            } catch (IOException e) {
-                e.printStackTrace();
+            } else {
+                break;
             }
         }
     }
@@ -33,31 +39,74 @@ public class TcpClient implements Client{
     private void startConnection(String ip, int port) {
         try {
             clientSocket = new Socket(ip, port);
-            output = new PrintWriter(clientSocket.getOutputStream(), true);
-            input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            clientSocket.setSoTimeout(50000);
+        } catch (IOException e) {
+            System.out.println("There are problems with connecting to the server. Trying again.");
+            tryReconnecting();
+        }
+    }
+
+    @Override
+    public void receiveMessage(){
+        try {
+            serverReceivedInput = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            String message = serverReceivedInput.readLine();
+            clientIsLogged(message);
+            System.out.println(message);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    private void receiveMessage() throws IOException {
-        input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        String message = input.readLine();
-        System.out.println(message);
-        //     output.println(message);
-    }
-
+    @Override
     public void sendMessage(String msg) {
-        output.println(msg);
+        try {
+            serverPrintWriter = new PrintWriter(clientSocket.getOutputStream(), true);
+            serverPrintWriter.println(msg);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
-
+    @Override
     public void stopConnection() {
         try {
-            input.close();
-            output.close();
+            serverReceivedInput.close();
+            serverPrintWriter.close();
             clientSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    private void tryReconnecting(){
+        try{
+            System.gc();
+            clientSocket = new Socket(ip, port);
+            System.out.println("Connection successfully established.");
+            SubtitlesPrinter.printEnter(5);
+            SubtitlesPrinter.printRegistrationRequest();
+            SubtitlesPrinter.printHelper();
+        } catch (IOException e) {
+            System.out.println("Reconnecting was not successful. Trying again in 5 seconds");
+            try {
+                sleep(5000);
+                tryReconnecting();
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        }
+
+    }
+
+    @Override
+    public boolean isClientLoggedIn() {
+        return clientLoggedIn;
+    }
+
+    private void clientIsLogged(String receivedData) {
+        if ((Objects.equals(receivedData, "Registered Successfully!") || receivedData.contains("Hello again"))) {
+            clientLoggedIn = true;
+        } else if ((Objects.equals(receivedData, "Successfully logged out. See you soon!"))) {
+            clientLoggedIn = false;
+        }
+    }
 }
