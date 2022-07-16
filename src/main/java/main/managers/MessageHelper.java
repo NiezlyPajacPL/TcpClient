@@ -1,4 +1,4 @@
-package managers;
+package main.managers;
 
 import java.nio.charset.StandardCharsets;
 

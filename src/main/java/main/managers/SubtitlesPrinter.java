@@ -1,4 +1,4 @@
-package managers;
+package main.managers;
 
 public final class SubtitlesPrinter {
     public static void printEnter(int enterCount){

@@ -1,4 +1,4 @@
-package network;
+package main.network;
 
 public interface Client extends Runnable{
 

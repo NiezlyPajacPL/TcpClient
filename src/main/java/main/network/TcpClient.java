@@ -1,6 +1,6 @@
-package network;
+package main.network;
 
-import managers.SubtitlesPrinter;
+import main.managers.SubtitlesPrinter;
 
 import java.io.BufferedReader;
 import java.io.IOException;
