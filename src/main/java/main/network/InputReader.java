@@ -1,5 +1,6 @@
 package main.network;
 
+import main.LoginController;
 import main.managers.MessageHelper;
 import main.managers.SubtitlesPrinter;
 
