@@ -9,4 +9,5 @@ public interface Client extends Runnable{
     void stopConnection();
 
     boolean isClientLoggedIn();
+
 }
