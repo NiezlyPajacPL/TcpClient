@@ -10,4 +10,6 @@ public interface Client extends Runnable{
 
     boolean isClientLoggedIn();
 
+    boolean isClientConnected();
+
 }

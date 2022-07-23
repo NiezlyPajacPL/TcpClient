@@ -1,5 +1,6 @@
 package main.scenes.login;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import main.network.Client;
 
@@ -9,6 +10,7 @@ public class LoginThread implements Runnable {
     LoginController loginController;
     Client client;
     LoginListener loginListener;
+
     public LoginThread(FXMLLoader fxmlLoader, LoginController loginController, Client client, LoginListener loginListener) {
         this.fxmlLoader = fxmlLoader;
         this.loginController = loginController;
@@ -20,20 +22,33 @@ public class LoginThread implements Runnable {
     @Override
     public void run() {
         while (true) {
-            loginController = fxmlLoader.getController();
-
-            if (!client.isClientLoggedIn()) {
-                if (loginController.login != null) {
-                    client.sendMessage(loginController.getCommand());
-                    System.out.println("Login request sent");
-                    loginController.login = null;
+            if (client != null) {
+                loginController = fxmlLoader.getController();
+                if (!client.isClientLoggedIn()) {
+                    if (loginController.login != null) {
+                        client.sendMessage(loginController.getCommand());
+                        System.out.println("Log: Login request sent");
+                        loginController.login = null;
+                        Platform.runLater(() -> loginController.wrongPassword.setText("Wrong username or password."));
+                    }
+                } else {
+                    System.out.println("Log: Client logged in, closing login thread.");
+                    loginListener.onClientLoggedIn();
+                    break;
                 }
-            }else{
-                System.out.println("closing thread");
-                loginListener.onClientLoggedIn();
-                break;
+            }else {
+                Platform.runLater(() -> loginController.connectionProblems.setText("Connection problems... Trying to reconnect."));
             }
         }
     }
 
+/*    private boolean clientConnected() {
+        loginController = fxmlLoader.getController();
+        if (client == null) {
+            Platform.runLater(() -> loginController.connectionProblems.setText("Connection problems... Trying to reconnect."));
+            return false;
+        }
+        Platform.runLater(() -> loginController.connectionProblems.setText(""));
+        return true;
+    }*/
 }

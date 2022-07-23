@@ -41,7 +41,7 @@ public class Main extends Application {
         Scene scene = new Scene(fxmlLoader.load());
         stage.setMinWidth(320);
         stage.setMinHeight(380);
-        stage.setTitle("asd");
+        stage.setTitle("PogChat");
         stage.setScene(scene);
         stage.show();
 
@@ -53,13 +53,13 @@ public class Main extends Application {
                     public void run() {
                         stage.hide();
                         ClientScene clientScene = new ClientScene();
-                        clientScene.display();
+                        ClientScene.display();
                     }
                 });
             }
         };
-        LoginThread loginHandler = new LoginThread(fxmlLoader, loginController, client, loginListener);
-        Thread thread = new Thread(loginHandler);
+        LoginThread loginThread = new LoginThread(fxmlLoader, loginController, client, loginListener);
+        Thread thread = new Thread(loginThread);
         thread.start();
     }
 

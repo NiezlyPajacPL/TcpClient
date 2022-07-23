@@ -19,6 +19,7 @@ public class TcpClient implements Client{
     private final String ip;
     private final int port;
     private boolean clientLoggedIn = false;
+    private boolean clientConnected = false;
 
     public TcpClient(String ip, int port) {
         this.ip = ip;
@@ -40,6 +41,7 @@ public class TcpClient implements Client{
     private void startConnection(String ip, int port) {
         try {
             clientSocket = new Socket(ip, port);
+            clientConnected = true;
         } catch (IOException e) {
             SubtitlesPrinter.printConnectionProblems();
             tryReconnecting();
@@ -89,6 +91,7 @@ public class TcpClient implements Client{
             SubtitlesPrinter.printEnter(5);
             SubtitlesPrinter.printRegistrationRequest();
             SubtitlesPrinter.printIsHelpNeeded();
+            clientConnected = true;
         } catch (IOException e) {
             SubtitlesPrinter.printReconnectingUnsuccessful();
             try {
@@ -104,6 +107,11 @@ public class TcpClient implements Client{
     @Override
     public boolean isClientLoggedIn() {
         return clientLoggedIn;
+    }
+
+    @Override
+    public boolean isClientConnected() {
+        return clientConnected;
     }
 
     private void clientIsLogged(String receivedData) {

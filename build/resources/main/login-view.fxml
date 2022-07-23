@@ -9,17 +9,17 @@
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
-    <Label text="WELCOME!">
+    <Label text="PogChat">
         <font>
             <Font name="Cambria" size="36.0" />
         </font>
     </Label>
-
-    <Label text="User Name:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
     <TextField fx:id="loginField" promptText="username" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-
-    <Label text="Password:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
     <PasswordField fx:id="passwordField" promptText="password" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-
+   <Label fx:id="wrongPassword" textFill="#eb0000">
+      <font>
+         <Font name="System Bold" size="14.0" />
+      </font>
+   </Label>
     <Button fx:id="loginButton" onAction="#onButtonClick" text="Log In!" />
 </VBox>

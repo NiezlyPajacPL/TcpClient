@@ -6,8 +6,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
-public class LoginController{
-
+public class ClientSceneController {
     public String login;
     public String password;
 
@@ -30,5 +29,4 @@ public class LoginController{
     public String getCommand() {
         return "/login " + login + " " + password;
     }
-
 }
