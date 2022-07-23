@@ -1,4 +1,4 @@
-package main.scenes;
+package main.scenes.clientScene;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -7,11 +7,11 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class MainScene{
+public class ClientScene {
 
 
     public void display(){
-        FXMLLoader fxmlLoader = new FXMLLoader(MainScene.class.getResource("/Scenes/main-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(ClientScene.class.getResource("/Scenes/main-view.fxml"));
         Stage window = new Stage();
         window.initModality(Modality.APPLICATION_MODAL);
         window.setTitle("TEMP");
@@ -22,7 +22,7 @@ public class MainScene{
             window.show();
 
         } catch (IOException e) {
-            System.out.println("nie dziala xd");
+           e.printStackTrace();
         }
     }
 

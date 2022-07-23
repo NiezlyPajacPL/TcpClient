@@ -1,4 +1,4 @@
-package main;
+package main.scenes.login;
 
 import javafx.fxml.FXMLLoader;
 import main.network.Client;
@@ -9,7 +9,7 @@ public class LoginThread implements Runnable {
     LoginController loginController;
     Client client;
     LoginListener loginListener;
-    LoginThread(FXMLLoader fxmlLoader, LoginController loginController, Client client, LoginListener loginListener) {
+    public LoginThread(FXMLLoader fxmlLoader, LoginController loginController, Client client, LoginListener loginListener) {
         this.fxmlLoader = fxmlLoader;
         this.loginController = loginController;
         this.client = client;
