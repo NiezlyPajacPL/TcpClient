@@ -16,10 +16,10 @@
     </Label>
 
     <Label text="User Name:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-    <TextField fx:id="loginField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+    <TextField fx:id="loginField" promptText="username" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
     <Label text="Password:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-    <PasswordField fx:id="passwordField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+    <PasswordField fx:id="passwordField" promptText="password" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
-    <Button onAction="#onButtonClick" text="Log In!" />
+    <Button fx:id="loginButton" onAction="#onButtonClick" text="Log In!" />
 </VBox>

@@ -1,27 +1,32 @@
 package main.scenes;
 
-import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
-import main.scenes.controllers.MainSceneController;
 
-public class MainScene extends Application implements Runnable{
+import java.io.IOException;
 
-    @Override
-    public void start(Stage stage) throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/todoname-view.fxml"));
-        VBox vBox = fxmlLoader.load();
-        MainSceneController mainSceneController = fxmlLoader.getController();
-        Scene scene = new Scene(vBox, 320, 320);
-        stage.setTitle("asd");
-        stage.setScene(scene);
-        stage.show();
+public class MainScene{
+
+
+    public void display(){
+        FXMLLoader fxmlLoader = new FXMLLoader(MainScene.class.getResource("/Scenes/main-view.fxml"));
+        Stage window = new Stage();
+        window.initModality(Modality.APPLICATION_MODAL);
+        window.setTitle("TEMP");
+        window.setMinWidth(250);
+        try {
+            Scene scene = new Scene(fxmlLoader.load());
+            window.setScene(scene);
+            window.show();
+
+        } catch (IOException e) {
+            System.out.println("nie dziala xd");
+        }
     }
 
-    @Override
-    public void run() {
+    public static void close(){
 
     }
 }

@@ -51,11 +51,6 @@ public class TcpClient implements Client{
         try {
             serverReceivedInput = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             String message = serverReceivedInput.readLine();
-            if ((Objects.equals(message, "Registered Successfully!") || message.contains("Hello again"))) {
-                if(!isClientLoggedIn()){
-                    Platform.exit();
-                }
-            }
             clientIsLogged(message);
             SubtitlesPrinter.printReceivedMessage(message);
         } catch (IOException e) {

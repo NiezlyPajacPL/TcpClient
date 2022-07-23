@@ -2,20 +2,19 @@ package main;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import main.managers.SubtitlesPrinter;
 import main.network.Client;
 import main.network.TcpClient;
+import main.scenes.MainScene;
 
 import java.util.Scanner;
 
 
-public class Main extends Application{
+
+public class Main extends Application {
     FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/login-view.fxml"));
     LoginController loginController;
     static Client client;
@@ -30,27 +29,37 @@ public class Main extends Application{
         clientThread.start();
         SubtitlesPrinter.printRegistrationRequest();
         SubtitlesPrinter.printIsHelpNeeded();
+
         launch();
     }
 
     @Override
     public void start(Stage stage) throws Exception {
-        VBox vBox = fxmlLoader.load();
-        Button btn = new Button();
         loginController = fxmlLoader.getController();
-        btn.setText("Quit");
-        btn.setOnAction((ActionEvent event) -> {
-            Platform.exit();
-        });
-        vBox.getChildren().add(btn);
-        Scene scene = new Scene(vBox, 320, 320);
+        System.out.println(clientName);
+        Scene scene = new Scene(fxmlLoader.load());
+        stage.setMinWidth(320);
+        stage.setMinHeight(380);
         stage.setTitle("asd");
         stage.setScene(scene);
         stage.show();
 
-        LoginHandler loginHandler = new LoginHandler(fxmlLoader,loginController,client,clientName);
+        LoginListener loginListener = new LoginListener() {
+            @Override
+            public void onClientLoggedIn() {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        stage.hide();
+                        MainScene mainScene = new MainScene();
+                        mainScene.display();
+                    }
+                });
+            }
+        };
+        LoginThread loginHandler = new LoginThread(fxmlLoader, loginController, client, loginListener);
         Thread thread = new Thread(loginHandler);
         thread.start();
-
     }
+
 }
