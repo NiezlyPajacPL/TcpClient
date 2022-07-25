@@ -1,39 +1,26 @@
 package main.scenes.login;
 
-import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
-import main.controllers.LoggingInController;
 import main.network.Client;
 
-import static java.lang.Thread.sleep;
 
 public class LoginThread implements Runnable {
 
-    FXMLLoader fxmlLoader;
-    LoggingInController loggingInController;
     Client client;
     LoginListener loginListener;
+    WrongPasswordListener wrongPasswordListener;
 
-    public LoginThread(FXMLLoader fxmlLoader, LoggingInController loggingInController, Client client, LoginListener loginListener) {
-        this.fxmlLoader = fxmlLoader;
-        this.loggingInController = loggingInController;
-        this.client = client;
+    public LoginThread(Client client, LoginListener loginListener, WrongPasswordListener wrongPasswordListener){
+        this.client =client;
         this.loginListener = loginListener;
+        this.wrongPasswordListener = wrongPasswordListener;
     }
-
 
     @Override
     public void run() {
-       while (true) {
-            loggingInController = fxmlLoader.getController();
-            if (!client.isClientLoggedIn()) {
-                if (loggingInController.getLogin() != null) {
-                    client.sendMessage(loggingInController.getLoginCommand());
-                    System.out.println("Log: Login request sent");
-                    loggingInController.setLoginToNull();
-                    Platform.runLater(() -> loggingInController.getSomethingWentWrongLabel().setText("Wrong username or password."));
-                }
-            } else {
+        while (true){
+            if(!client.isClientLoggedIn()){
+                wrongPasswordListener.onWrongPassword();
+            }else if(client.isClientLoggedIn()){
                 System.out.println("Log: Client logged in, closing login thread.");
                 loginListener.onClientLoggedIn();
                 break;
@@ -52,9 +39,16 @@ public class LoginThread implements Runnable {
         return true;
     }*/
 
-/*        while (true){
-            if(client.isClientLoggedIn()){
-             //   System.out.println("asd");
+/*       while (true) {
+            loggingInController = fxmlLoader.getController();
+            if (!client.isClientLoggedIn()) {
+                if (loggingInController.getLogin() != null) {
+                    client.sendMessage(loggingInController.getLoginCommand());
+                    System.out.println("Log: Login request sent");
+                    loggingInController.setLoginToNull();
+                    Platform.runLater(() -> loggingInController.getSomethingWentWrongLabel().setText("Wrong username or password."));
+                }
+            } else {
                 System.out.println("Log: Client logged in, closing login thread.");
                 loginListener.onClientLoggedIn();
                 break;

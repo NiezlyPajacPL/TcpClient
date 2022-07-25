@@ -37,11 +37,6 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-     //   VBox tempVBox = fxmlLoader.load(); // usunac po refactorze z controllerami(teraz istnieje tylko po to, by dodac przycisk)
-        Scene scene = new Scene(fxmlLoader.load()); //Scene scene = new Scene(fxmlLoader.load());
-        loginController = fxmlLoader.getController();
-        loginController.construct(client);
-
         LoginListener loginListener = new LoginListener() {
             @Override
             public void onClientLoggedIn() {
@@ -55,6 +50,9 @@ public class Main extends Application {
                 });
             }
         };
+        Scene scene = new Scene(fxmlLoader.load());
+        loginController = fxmlLoader.getController();
+        loginController.construct(client,loginListener);
 
         stage.setMinWidth(350);
         stage.setMinHeight(380);
@@ -62,9 +60,9 @@ public class Main extends Application {
         stage.setScene(scene);
         stage.show();
 
-        LoginThread loginThread = new LoginThread(fxmlLoader, loginController, client, loginListener);
+/*        LoginThread loginThread = new LoginThread(fxmlLoader, loginController, client, loginListener);
         Thread thread = new Thread(loginThread);
-        thread.start();
+        thread.start();*/
     }
 
 }

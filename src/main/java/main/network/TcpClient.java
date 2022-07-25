@@ -19,7 +19,7 @@ public class TcpClient implements Client {
     private BufferedReader serverReceivedInput;
     private final String ip;
     private final int port;
-    private boolean clientLoggedIn = false;
+    private boolean clientLoggedIn;
     private boolean clientConnected = false;
     public ArrayList<String> usersList = new ArrayList<>();
 

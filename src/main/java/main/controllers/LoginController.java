@@ -1,20 +1,31 @@
 package main.controllers;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 import main.network.Client;
+import main.scenes.login.LoginListener;
+import main.scenes.login.LoginThread;
+import main.scenes.login.WrongPasswordListener;
 
-public class LoginController implements LoggingInController {
+import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
+
+public class LoginController{
 
     private String login;
     private String password;
-    protected Client client;
     final String LOGIN = "login";
     final String REGISTER = "register";
     String loginType = LOGIN;
+
+    public Client client;
+    public LoginListener loginListener;
+    private LoginThread loginThread;
+    private Thread thread;
 
     @FXML
     protected Button switchRegisterButton;
@@ -31,8 +42,27 @@ public class LoginController implements LoggingInController {
     @FXML
     protected TextField loginField;
 
+    WrongPasswordListener wrongPasswordListener = () -> {
+        if (!wrongPassword.getText().equals("Wrong username or password.")) {
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    wrongPassword.setText("Wrong username or password.");
+                    loginField.setText("");
+                    passwordField.setText("");
+                }
+            });
+        }
+    };
+
     @FXML
     protected void onButtonClick() {
+        if (!thread.isAlive()) {
+            loginThread = new LoginThread(client, loginListener, wrongPasswordListener);
+            thread = new Thread(loginThread);
+            thread.start();
+        }
+
         login = loginField.getText();
         password = passwordField.getText();
 
@@ -56,38 +86,23 @@ public class LoginController implements LoggingInController {
             switchRegisterButton.setText("Switch to register");
             changeLoginTypeLabel.setText("If you don't have account yet, register click here:");
         }
+
     }
 
-    @Override
-    public String getLoginCommand() {
+    private String getLoginCommand() {
         return "/login " + login + " " + password;
     }
 
-    public String getRegisterCommand() {
+    private String getRegisterCommand() {
         return "/register " + login + " " + password;
     }
 
-
-    @Override
-    public String getLogin() {
-        return login;
-    }
-
-    @Override
-    public void setLoginToNull() {
-        login = null;
-    }
-
-    @Override
-    public Label getSomethingWentWrongLabel() {
-        return wrongPassword;
-    }
-
-    public void construct(Client client) {
+    public void construct(Client client, LoginListener loginListener) {
         this.client = client;
+        this.loginListener = loginListener;
+
+        loginThread = new LoginThread(client, loginListener, wrongPasswordListener);
+        thread = new Thread(loginThread);
     }
 
-    public Client getClient() {
-        return client;
-    }
 }
