@@ -9,7 +9,7 @@ import main.managers.SubtitlesPrinter;
 import main.network.Client;
 import main.network.TcpClient;
 import main.scenes.clientScene.ClientScene;
-import main.scenes.login.LoginController;
+import main.controllers.LoginController;
 import main.scenes.login.LoginListener;
 import main.scenes.login.LoginThread;
 
@@ -37,13 +37,10 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+     //   VBox tempVBox = fxmlLoader.load(); // usunac po refactorze z controllerami(teraz istnieje tylko po to, by dodac przycisk)
+        Scene scene = new Scene(fxmlLoader.load()); //Scene scene = new Scene(fxmlLoader.load());
         loginController = fxmlLoader.getController();
-        Scene scene = new Scene(fxmlLoader.load());
-        stage.setMinWidth(320);
-        stage.setMinHeight(380);
-        stage.setTitle("PogChat");
-        stage.setScene(scene);
-        stage.show();
+        loginController.construct(client);
 
         LoginListener loginListener = new LoginListener() {
             @Override
@@ -52,12 +49,19 @@ public class Main extends Application {
                     @Override
                     public void run() {
                         stage.hide();
-                        ClientScene clientScene = new ClientScene();
-                        ClientScene.display();
+                        ClientScene clientScene = new ClientScene(client);
+                        clientScene.display();
                     }
                 });
             }
         };
+
+        stage.setMinWidth(350);
+        stage.setMinHeight(380);
+        stage.setTitle("PogChat");
+        stage.setScene(scene);
+        stage.show();
+
         LoginThread loginThread = new LoginThread(fxmlLoader, loginController, client, loginListener);
         Thread thread = new Thread(loginThread);
         thread.start();

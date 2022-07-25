@@ -8,11 +8,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Objects;
 
 import static java.lang.Thread.sleep;
 
-public class TcpClient implements Client{
+public class TcpClient implements Client {
     private Socket clientSocket;
     private PrintWriter serverPrintWriter;
     private BufferedReader serverReceivedInput;
@@ -20,6 +21,7 @@ public class TcpClient implements Client{
     private final int port;
     private boolean clientLoggedIn = false;
     private boolean clientConnected = false;
+    public ArrayList<String> usersList = new ArrayList<>();
 
     public TcpClient(String ip, int port) {
         this.ip = ip;
@@ -53,6 +55,7 @@ public class TcpClient implements Client{
         try {
             serverReceivedInput = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             String message = serverReceivedInput.readLine();
+            updateClientList(message);
             clientIsLogged(message);
             SubtitlesPrinter.printReceivedMessage(message);
         } catch (IOException e) {
@@ -119,6 +122,17 @@ public class TcpClient implements Client{
             clientLoggedIn = true;
         } else if ((Objects.equals(receivedData, "Successfully logged out. See you soon!"))) {
             clientLoggedIn = false;
+        }
+    }
+
+    private void updateClientList(String receivedData) {
+        if (receivedData.contains("Online users list:")) {
+            String[] words = receivedData.split(" ");
+            for (int i = 3; i < words.length; i++) {
+                if(!usersList.contains(words[i])){
+                    usersList.add(words[i]);
+                }
+            }
         }
     }
 }

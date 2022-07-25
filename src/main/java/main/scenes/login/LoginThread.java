@@ -2,18 +2,21 @@ package main.scenes.login;
 
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
+import main.controllers.LoggingInController;
 import main.network.Client;
+
+import static java.lang.Thread.sleep;
 
 public class LoginThread implements Runnable {
 
     FXMLLoader fxmlLoader;
-    LoginController loginController;
+    LoggingInController loggingInController;
     Client client;
     LoginListener loginListener;
 
-    public LoginThread(FXMLLoader fxmlLoader, LoginController loginController, Client client, LoginListener loginListener) {
+    public LoginThread(FXMLLoader fxmlLoader, LoggingInController loggingInController, Client client, LoginListener loginListener) {
         this.fxmlLoader = fxmlLoader;
-        this.loginController = loginController;
+        this.loggingInController = loggingInController;
         this.client = client;
         this.loginListener = loginListener;
     }
@@ -21,26 +24,23 @@ public class LoginThread implements Runnable {
 
     @Override
     public void run() {
-        while (true) {
-            if (client != null) {
-                loginController = fxmlLoader.getController();
-                if (!client.isClientLoggedIn()) {
-                    if (loginController.login != null) {
-                        client.sendMessage(loginController.getCommand());
-                        System.out.println("Log: Login request sent");
-                        loginController.login = null;
-                        Platform.runLater(() -> loginController.wrongPassword.setText("Wrong username or password."));
-                    }
-                } else {
-                    System.out.println("Log: Client logged in, closing login thread.");
-                    loginListener.onClientLoggedIn();
-                    break;
+       while (true) {
+            loggingInController = fxmlLoader.getController();
+            if (!client.isClientLoggedIn()) {
+                if (loggingInController.getLogin() != null) {
+                    client.sendMessage(loggingInController.getLoginCommand());
+                    System.out.println("Log: Login request sent");
+                    loggingInController.setLoginToNull();
+                    Platform.runLater(() -> loggingInController.getSomethingWentWrongLabel().setText("Wrong username or password."));
                 }
-            }else {
-                Platform.runLater(() -> loginController.connectionProblems.setText("Connection problems... Trying to reconnect."));
+            } else {
+                System.out.println("Log: Client logged in, closing login thread.");
+                loginListener.onClientLoggedIn();
+                break;
             }
         }
     }
+}
 
 /*    private boolean clientConnected() {
         loginController = fxmlLoader.getController();
@@ -51,4 +51,12 @@ public class LoginThread implements Runnable {
         Platform.runLater(() -> loginController.connectionProblems.setText(""));
         return true;
     }*/
-}
+
+/*        while (true){
+            if(client.isClientLoggedIn()){
+             //   System.out.println("asd");
+                System.out.println("Log: Client logged in, closing login thread.");
+                loginListener.onClientLoggedIn();
+                break;
+            }
+        }*/

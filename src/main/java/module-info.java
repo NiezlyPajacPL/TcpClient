@@ -15,4 +15,6 @@ module tcpklient.main {
     exports main;
     exports main.scenes.login;
     opens main.scenes.login to javafx.fxml;
+    exports main.controllers;
+    opens main.controllers to javafx.fxml;
 }

@@ -3,10 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.scenes.login.ClientSceneController">
-   <left>
-      <ListView maxHeight="-Infinity" maxWidth="150" BorderPane.alignment="CENTER" />
-   </left>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.controllers.ClientSceneController">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
@@ -54,4 +51,12 @@
         </tabs>
       </TabPane>
    </center>
+   <left>
+      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+         <children>
+            <ListView fx:id="usersList" prefHeight="326.0" prefWidth="100.0" />
+            <Button fx:id="refresh" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="25.0" prefWidth="104.0" text="Refresh" onAction="#onRefresh" />
+         </children>
+      </VBox>
+   </left>
 </BorderPane>
