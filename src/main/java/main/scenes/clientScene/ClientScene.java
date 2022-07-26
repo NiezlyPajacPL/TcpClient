@@ -13,9 +13,11 @@ import java.io.IOException;
 public class ClientScene {
 
     Client client;
+    String userName;
 
-    public ClientScene(Client client){
+    public ClientScene(Client client,String userName){
         this.client = client;
+        this.userName = userName;
     }
 
     public void display(){
@@ -28,7 +30,7 @@ public class ClientScene {
         try {
             Scene scene = new Scene(fxmlLoader.load());
             ClientSceneController clientSceneController = fxmlLoader.getController();
-            clientSceneController.construct((TcpClient) client);
+            clientSceneController.construct((TcpClient) client,userName);
 
             window.setScene(scene);
             window.show();

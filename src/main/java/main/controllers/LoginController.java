@@ -26,6 +26,7 @@ public class LoginController{
     public LoginListener loginListener;
     private LoginThread loginThread;
     private Thread thread;
+    protected String userName;
 
     @FXML
     protected Button switchRegisterButton;
@@ -48,7 +49,7 @@ public class LoginController{
                 @Override
                 public void run() {
                     wrongPassword.setText("Wrong username or password.");
-                    loginField.setText("");
+               //     loginField.setText("");
                     passwordField.setText("");
                 }
             });
@@ -105,4 +106,7 @@ public class LoginController{
         thread = new Thread(loginThread);
     }
 
+    public String getUserName() {
+        return login;
+    }
 }

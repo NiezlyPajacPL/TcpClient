@@ -20,6 +20,7 @@ public class Main extends Application {
     FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/login-view.fxml"));
     LoginController loginController;
     static Client client;
+  //  String userName;
 
     public static void main(String[] args) {
         final String CONNECTION_IP = "127.0.0.1";
@@ -37,21 +38,22 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        Scene scene = new Scene(fxmlLoader.load());
+        loginController = fxmlLoader.getController();
         LoginListener loginListener = new LoginListener() {
             @Override
             public void onClientLoggedIn() {
+               String userName = loginController.getUserName();
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
                         stage.close();
-                        ClientScene clientScene = new ClientScene(client);
+                        ClientScene clientScene = new ClientScene(client,userName);
                         clientScene.display();
                     }
                 });
             }
         };
-        Scene scene = new Scene(fxmlLoader.load());
-        loginController = fxmlLoader.getController();
         loginController.construct(client,loginListener);
 
         stage.setMinWidth(350);

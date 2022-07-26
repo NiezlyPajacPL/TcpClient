@@ -2,7 +2,6 @@ package main.controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyEvent;
 import main.helpers.MessagingTab;
 import main.network.TcpClient;
 
@@ -15,6 +14,13 @@ public class ClientSceneController {
     private TcpClient client;
     private ArrayList<String> usersList;
     private final Map<String, MessagingTab> openTabs = new HashMap<>();
+    private String userName;
+
+    public void construct(TcpClient client,String userName) {
+        this.client = client;
+        this.userName = userName;
+        loadUsersList();
+    }
 
     @FXML
     Button refresh;
@@ -31,11 +37,6 @@ public class ClientSceneController {
         String[] usersString = convertArrayList();
         usersListView.getItems().clear();
         usersListView.getItems().addAll(usersString);
-    }
-
-    public void construct(TcpClient client) {
-        this.client = client;
-        loadUsersList();
     }
 
     @FXML
@@ -61,6 +62,7 @@ public class ClientSceneController {
         String message = messageTextArea.getText();
         if(receiver != null && message != null){
             client.sendMessage(messageCommand(receiver,message));
+            openTabs.get(receiver).getTextArea().appendText(userName + ": " + message + "\n");
         }
     }
 
