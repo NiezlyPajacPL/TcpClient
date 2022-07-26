@@ -11,7 +11,6 @@ import main.network.TcpClient;
 import main.scenes.clientScene.ClientScene;
 import main.controllers.LoginController;
 import main.scenes.login.LoginListener;
-import main.scenes.login.LoginThread;
 
 import java.util.Scanner;
 
@@ -33,6 +32,7 @@ public class Main extends Application {
         SubtitlesPrinter.printIsHelpNeeded();
 
         launch();
+        System.exit(0);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class Main extends Application {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        stage.hide();
+                        stage.close();
                         ClientScene clientScene = new ClientScene(client);
                         clientScene.display();
                     }
@@ -60,9 +60,6 @@ public class Main extends Application {
         stage.setScene(scene);
         stage.show();
 
-/*        LoginThread loginThread = new LoginThread(fxmlLoader, loginController, client, loginListener);
-        Thread thread = new Thread(loginThread);
-        thread.start();*/
     }
 
 }

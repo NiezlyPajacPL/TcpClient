@@ -21,7 +21,7 @@ public class TcpClient implements Client {
     private final int port;
     private boolean clientLoggedIn;
     private boolean clientConnected = false;
-    public ArrayList<String> usersList = new ArrayList<>();
+    private final ArrayList<String> usersList = new ArrayList<>();
 
     public TcpClient(String ip, int port) {
         this.ip = ip;
@@ -127,6 +127,7 @@ public class TcpClient implements Client {
 
     private void updateClientList(String receivedData) {
         if (receivedData.contains("Online users list:")) {
+            usersList.clear();
             String[] words = receivedData.split(" ");
             for (int i = 3; i < words.length; i++) {
                 if(!usersList.contains(words[i])){
@@ -134,5 +135,9 @@ public class TcpClient implements Client {
                 }
             }
         }
+    }
+
+    public ArrayList<String> getUsersList() {
+        return usersList;
     }
 }
