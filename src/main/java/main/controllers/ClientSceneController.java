@@ -1,30 +1,34 @@
 package main.controllers;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyEvent;
+import main.helpers.MessagingTab;
 import main.network.TcpClient;
-import org.w3c.dom.events.MouseEvent;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ClientSceneController {
 
     private TcpClient client;
     private ArrayList<String> usersList;
-    String[] usersString;
+    private final Map<String, MessagingTab> openTabs = new HashMap<>();
 
     @FXML
     Button refresh;
     @FXML
     ListView<String> usersListView;
+    @FXML
+    TabPane tabPane;
+    @FXML
+    TextField messageTextField;
 
     @FXML
     protected void onRefresh() {
         loadUsersList();
-        usersString = convertArrayList();
+        String[] usersString = convertArrayList();
         usersListView.getItems().clear();
         usersListView.getItems().addAll(usersString);
     }
@@ -35,8 +39,25 @@ public class ClientSceneController {
     }
 
     @FXML
-    public void handleMouseClick(javafx.scene.input.MouseEvent mouseEvent) {
-        System.out.println("clicked on " + usersListView.getSelectionModel().getSelectedItem());
+    protected void handleMouseClick() {
+        String user = usersListView.getSelectionModel().getSelectedItem();
+        System.out.println("clicked on " + user );
+
+        if(user!= null && !user.equals("") && openTabs.get(user) == null){
+            Tab userTab = new Tab();
+            userTab.setText(user);
+            TextArea textArea = new TextArea();
+            textArea.setEditable(false);
+            userTab.setContent(textArea);
+            userTab.setOnClosed(event -> openTabs.remove(user));
+            tabPane.getTabs().add(userTab);
+            openTabs.put(user,new MessagingTab(userTab,textArea));
+        }
+    }
+
+    @FXML
+    protected void sendMessage(KeyEvent enter){
+
     }
 
     private void loadUsersList() {

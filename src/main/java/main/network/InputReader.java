@@ -1,6 +1,6 @@
 package main.network;
 
-import main.managers.MessageHelper;
+import main.helpers.MessageHelper;
 import main.managers.SubtitlesPrinter;
 
 import java.util.Scanner;

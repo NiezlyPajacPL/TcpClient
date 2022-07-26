@@ -1,4 +1,6 @@
-package main.managers;
+package main.helpers;
+
+import main.managers.SubtitlesPrinter;
 
 import java.nio.charset.StandardCharsets;
 
