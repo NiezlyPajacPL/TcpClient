@@ -44,8 +44,8 @@
    <bottom>
       <HBox prefHeight="50.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <TextArea prefHeight="50.0" prefWidth="562.0" promptText="Type your message here..." />
-            <Button mnemonicParsing="false" prefHeight="63.0" prefWidth="68.0" text="SEND" />
+            <TextArea fx:id="messageTextArea" prefHeight="50.0" prefWidth="562.0" promptText="Type your message here..." />
+            <Button mnemonicParsing="false" prefHeight="63.0" prefWidth="68.0" text="SEND" onAction="#onSendButtonClicked" />
          </children>
       </HBox>
    </bottom>

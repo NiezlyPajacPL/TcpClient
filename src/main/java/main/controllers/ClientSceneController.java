@@ -23,7 +23,7 @@ public class ClientSceneController {
     @FXML
     TabPane tabPane;
     @FXML
-    TextField messageTextField;
+    TextArea messageTextArea;
 
     @FXML
     protected void onRefresh() {
@@ -56,8 +56,12 @@ public class ClientSceneController {
     }
 
     @FXML
-    protected void sendMessage(KeyEvent enter){
-
+    protected void onSendButtonClicked(){
+        String receiver = getUserFromOpenedTab();
+        String message = messageTextArea.getText();
+        if(receiver != null && message != null){
+            client.sendMessage(messageCommand(receiver,message));
+        }
     }
 
     private void loadUsersList() {
@@ -69,9 +73,20 @@ public class ClientSceneController {
         String[] userStrings = new String[usersList.size()];
         for(int i = 0; i < usersList.size();i++){
             userStrings[i] = usersList.get(i).replace("[", "").replace("]", "").replace(",","");
-            System.out.println(userStrings[i]);
         }
         return userStrings;
     }
 
+    private String getUserFromOpenedTab(){
+        for(Map.Entry<String,MessagingTab> entry : openTabs.entrySet()){
+            if(entry.getValue().getTab().isSelected()){
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
+    private String messageCommand(String receiver, String message){
+        return "/msg " + receiver + " " + message;
+    }
 }
