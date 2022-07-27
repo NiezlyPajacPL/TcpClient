@@ -3,6 +3,7 @@ package main.controllers;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import main.helpers.MessagingTab;
+import main.helpers.TabCreator;
 import main.network.TcpClient;
 
 import java.util.ArrayList;
@@ -13,12 +14,13 @@ public class ClientSceneController {
 
     private TcpClient client;
     private ArrayList<String> usersList;
-    private final Map<String, MessagingTab> openTabs = new HashMap<>();
+    private Map<String, MessagingTab> openTabs;
     private String userName;
 
-    public void construct(TcpClient client,String userName) {
+    public void construct(TcpClient client,String userName,Map<String, MessagingTab> openTabs) {
         this.client = client;
         this.userName = userName;
+        this.openTabs = openTabs;
         loadUsersList();
     }
 
@@ -27,7 +29,7 @@ public class ClientSceneController {
     @FXML
     ListView<String> usersListView;
     @FXML
-    TabPane tabPane;
+    public TabPane tabPane;
     @FXML
     TextArea messageTextArea;
 
@@ -45,11 +47,9 @@ public class ClientSceneController {
         System.out.println("clicked on " + user );
 
         if(user!= null && !user.equals("") && openTabs.get(user) == null){
-            Tab userTab = new Tab();
-            userTab.setText(user);
             TextArea textArea = new TextArea();
-            textArea.setEditable(false);
-            userTab.setContent(textArea);
+            Tab userTab = TabCreator.createTab(user,textArea);
+
             userTab.setOnClosed(event -> openTabs.remove(user));
             tabPane.getTabs().add(userTab);
             openTabs.put(user,new MessagingTab(userTab,textArea));
@@ -63,6 +63,7 @@ public class ClientSceneController {
         if(receiver != null && message != null){
             client.sendMessage(messageCommand(receiver,message));
             openTabs.get(receiver).getTextArea().appendText(userName + ": " + message + "\n");
+            messageTextArea.clear();
         }
     }
 

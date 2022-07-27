@@ -22,10 +22,12 @@ public class TcpClient implements Client {
     private boolean clientLoggedIn;
     private boolean clientConnected = false;
     private final ArrayList<String> usersList = new ArrayList<>();
+    private MessageListener messageListener;
 
-    public TcpClient(String ip, int port) {
+    public TcpClient(String ip, int port, MessageListener messageListener) {
         this.ip = ip;
         this.port = port;
+        this.messageListener = messageListener;
     }
 
     @Override
@@ -57,6 +59,9 @@ public class TcpClient implements Client {
             String message = serverReceivedInput.readLine();
             updateClientList(message);
             clientIsLogged(message);
+            if(isMessage(message)){
+                messageListener.onMessageReceived(message);
+            }
             SubtitlesPrinter.printReceivedMessage(message);
         } catch (IOException e) {
             SubtitlesPrinter.printLostConnection();
@@ -130,11 +135,19 @@ public class TcpClient implements Client {
             usersList.clear();
             String[] words = receivedData.split(" ");
             for (int i = 3; i < words.length; i++) {
-                if(!usersList.contains(words[i])){
+                if (!usersList.contains(words[i])) {
                     usersList.add(words[i]);
                 }
             }
         }
+    }
+
+    private boolean isMessage(String message) {
+        if ((Objects.equals(message, "Registered Successfully!") || message.contains("Hello again")) ||
+                message.equals("Successfully logged out. See you soon!") || message.contains("Online users list:")) {
+            return false;
+        }
+        return true;
     }
 
     public ArrayList<String> getUsersList() {
