@@ -23,7 +23,6 @@ public class TcpClient implements Client {
     private final int port;
     private boolean clientLoggedIn;
     private boolean clientConnected = false;
-    private final ArrayList<String> usersList = new ArrayList<>();
     private ObservableList<String> observableList = FXCollections.observableArrayList();
     private MessageListener messageListener;
 
@@ -60,7 +59,6 @@ public class TcpClient implements Client {
         try {
             serverReceivedInput = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             String message = serverReceivedInput.readLine();
-            updateClientList(message);
             updateObservableList(message);
             clientIsLogged(message);
             if(isMessage(message)){
@@ -147,28 +145,14 @@ public class TcpClient implements Client {
         }
     }
 
-    private void updateClientList(String receivedData) {
-        if (receivedData.contains("Online users list:")) {
-            usersList.clear();
-            String[] words = receivedData.split(" ");
-            for (int i = 3; i < words.length; i++) {
-                if (!usersList.contains(words[i])) {
-                    usersList.add(words[i]);
-                }
-            }
-        }
-    }
 
     private boolean isMessage(String message) {
         if ((Objects.equals(message, "Registered Successfully!") || message.contains("Hello again")) ||
-                message.equals("Successfully logged out. See you soon!") || message.contains("Online users list:")) {
+                message.equals("Successfully logged out. See you soon!") || message.contains("Online users list:") ||
+                message.equals("Something went wrong or client does not exist in our data base. Try again")){
             return false;
         }
         return true;
-    }
-
-    public ArrayList<String> getUsersList() {
-        return usersList;
     }
 
     public ObservableList<String> getObservableList() {

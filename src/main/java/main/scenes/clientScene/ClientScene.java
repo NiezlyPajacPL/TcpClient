@@ -8,9 +8,6 @@ import main.controllers.ClientSceneController;
 import main.helpers.MessagingTab;
 import main.network.Client;
 import main.network.TcpClient;
-
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 public class ClientScene {
@@ -31,14 +28,11 @@ public class ClientScene {
     }
 
     public void display(){
-      //  FXMLLoader fxmlLoader = new FXMLLoader(ClientScene.class.getResource("/Scenes/main-view.fxml"));
-       // Stage window = new Stage();
         window.initModality(Modality.APPLICATION_MODAL);
-        window.setTitle("client");
+        window.setTitle("PogChat");
         window.setMinWidth(250);
 
         Scene scene = new Scene(fxmlLoader.getRoot());
-        //clientSceneController = fxmlLoader.getController();
         clientSceneController.construct((TcpClient) client,userName,openTabs);
 
         window.setScene(scene);

@@ -7,9 +7,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import main.helpers.MessagingTab;
 import main.helpers.TabCreator;
+import main.managers.Delay;
 import main.network.TcpClient;
 
 import java.util.*;
+
+import static java.lang.Thread.sleep;
 
 public class ClientSceneController {
 
@@ -18,17 +21,21 @@ public class ClientSceneController {
     private Map<String, MessagingTab> openTabs;
     private String userName;
     FilteredList<String> userFilter;
+    boolean filterRunning = false;
+    private final String REFRESHING = "REFRESHING...";
+    private final String ALL_USERS_COMMAND = "/allUsers";
+    private final String REFRESH = "Refresh";
 
     public void construct(TcpClient client, String userName, Map<String, MessagingTab> openTabs) {
         this.client = client;
         this.userName = userName;
         this.openTabs = openTabs;
         loadUsersList();
-        startSearchFilter();
+     //   startSearchFilter();
     }
 
     @FXML
-    Button refresh;
+    Button refreshButton;
     @FXML
     ListView<String> usersListView;
     @FXML
@@ -40,10 +47,11 @@ public class ClientSceneController {
 
     @FXML
     protected void onRefresh() {
-        usersListView.getItems().clear();
-        loadUsersList();
-
-        usersListView.getItems().addAll(userFilter);
+        if(!refreshButton.getText().equals(REFRESHING)){
+            client.sendMessage(ALL_USERS_COMMAND);//
+            usersListView.getItems().clear();
+            loadUsersList();
+        }
     }
 
     @FXML
@@ -72,15 +80,15 @@ public class ClientSceneController {
         }
     }
 
-    private void startSearchFilter(){
-        userFilter = new FilteredList<>(observableList,s -> true);
+    private void startSearchFilter() {
+        userFilter = new FilteredList<>(observableList, s -> true);
 
         searchField.textProperty().addListener(observable -> {
             String filter = searchField.getText();
 
-            if(filter== null || filter.length() == 0){
+            if (filter == null || filter.length() == 0) {
                 userFilter.setPredicate(s -> true);
-            }else{
+            } else {
                 userFilter.setPredicate(s -> s.contains(filter));
                 usersListView.getItems().clear();
                 usersListView.getItems().addAll(userFilter);
@@ -89,8 +97,22 @@ public class ClientSceneController {
     }
 
     private void loadUsersList() {
-        client.sendMessage("/allUsers");
-        observableList = FXCollections.observableList(client.getObservableList());
+        if(!filterRunning){
+            client.sendMessage(ALL_USERS_COMMAND);
+            observableList = FXCollections.observableList(client.getObservableList());
+            startSearchFilter();
+            filterRunning = true;
+        }else{
+        refreshButton.setText(REFRESHING);
+            Delay.delay(2000, new Runnable() {
+                @Override
+                public void run() {
+                    observableList = FXCollections.observableList(client.getObservableList());
+                    usersListView.getItems().addAll(userFilter);
+                    refreshButton.setText(REFRESH);
+                }
+            });
+        }
     }
 
 

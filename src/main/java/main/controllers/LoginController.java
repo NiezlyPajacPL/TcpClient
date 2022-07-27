@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import main.managers.Delay;
 import main.network.Client;
 import main.scenes.login.LoginListener;
 import main.scenes.login.LoginThread;
@@ -58,11 +59,11 @@ public class LoginController{
 
     @FXML
     protected void onButtonClick() {
-        if (!thread.isAlive()) {
+/*        if (!thread.isAlive()) {
             loginThread = new LoginThread(client, loginListener, wrongPasswordListener);
             thread = new Thread(loginThread);
             thread.start();
-        }
+        }*/
 
         login = loginField.getText();
         password = passwordField.getText();
@@ -72,6 +73,17 @@ public class LoginController{
         } else if (loginType.equals(REGISTER)) {
             client.sendMessage(getRegisterCommand());
         }
+        Delay.delay(2000, new Runnable() {
+            @Override
+            public void run() {
+                if(!client.isClientLoggedIn()){
+                    wrongPasswordListener.onWrongPassword();
+                }else if(client.isClientLoggedIn()){
+                    System.out.println("Log: Client logged in, closing login thread.");
+                    loginListener.onClientLoggedIn();
+                }
+            }
+        });
     }
 
     @FXML
@@ -101,9 +113,8 @@ public class LoginController{
     public void construct(Client client, LoginListener loginListener) {
         this.client = client;
         this.loginListener = loginListener;
-
-        loginThread = new LoginThread(client, loginListener, wrongPasswordListener);
-        thread = new Thread(loginThread);
+/*        loginThread = new LoginThread(client, loginListener, wrongPasswordListener);
+        thread = new Thread(loginThread);*/
     }
 
     public String getUserName() {

@@ -21,7 +21,6 @@ import main.scenes.login.LoginListener;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 
 
 public class Main extends Application {
