@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Scanner;
 
 
-
 public class Main extends Application {
     FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/login-view.fxml"));
     static FXMLLoader clientLoader = new FXMLLoader(ClientScene.class.getResource("/Scenes/main-view.fxml"));
@@ -43,29 +42,26 @@ public class Main extends Application {
             public void onMessageReceived(String message) {
                 String sender = getSenderFromString(message);
 
-                if(openTabs.get(sender) == null ){
+                if (openTabs.get(sender) == null) {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
                             TextArea textArea = new TextArea();
-                            Tab userTab = TabCreator.createTab(sender,textArea);
+                            Tab userTab = TabCreator.createTab(sender, textArea);
                             userTab.setOnClosed(event -> openTabs.remove(sender));
                             clientSceneController.tabPane.getTabs().add(userTab);
-                            openTabs.put(sender,new MessagingTab(userTab,textArea));
+                            openTabs.put(sender, new MessagingTab(userTab, textArea));
                             openTabs.get(sender).getTextArea().appendText(message + "\n");
                         }
                     });
-                    /* tabPane.getTabs().add(userTab);
-                    openTabs.put(user,new MessagingTab(userTab,textArea));*/
-                }else{
+                } else {
                     openTabs.get(sender).getTextArea().appendText(message + "\n");
                 }
 
             }
         };
-
-        Scanner scan = new Scanner(System.in);
-        client = new TcpClient(CONNECTION_IP, CONNECTION_PORT,messageListener);
+        //  Scanner scan = new Scanner(System.in);
+        client = new TcpClient(CONNECTION_IP, CONNECTION_PORT, messageListener);
         Thread clientThread = new Thread(client);
         clientThread.start();
         SubtitlesPrinter.printRegistrationRequest();
@@ -82,7 +78,7 @@ public class Main extends Application {
         LoginListener loginListener = new LoginListener() {
             @Override
             public void onClientLoggedIn() {
-               String userName = loginController.getUserName();
+                String userName = loginController.getUserName();
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -90,7 +86,7 @@ public class Main extends Application {
                         try {
                             clientLoader.load();
                             clientSceneController = clientLoader.getController();
-                            ClientScene clientScene = new ClientScene(client,clientLoader,clientSceneController,userName,clientWindow,openTabs);
+                            ClientScene clientScene = new ClientScene(client, clientLoader, clientSceneController, userName, clientWindow, openTabs);
                             clientScene.display();
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -99,7 +95,7 @@ public class Main extends Application {
                 });
             }
         };
-        loginController.construct(client,loginListener);
+        loginController.construct(client, loginListener);
 
         stage.setMinWidth(350);
         stage.setMinHeight(380);
@@ -109,8 +105,8 @@ public class Main extends Application {
 
     }
 
-    private static String getSenderFromString(String string){
+    private static String getSenderFromString(String string) {
         String[] sender = string.split(" ");
-        return sender[0].replace(":","");
+        return sender[0].replace(":", "");
     }
 }

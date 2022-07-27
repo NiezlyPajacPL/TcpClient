@@ -38,19 +38,3 @@ public class LoginThread implements Runnable {
         Platform.runLater(() -> loginController.connectionProblems.setText(""));
         return true;
     }*/
-
-/*       while (true) {
-            loggingInController = fxmlLoader.getController();
-            if (!client.isClientLoggedIn()) {
-                if (loggingInController.getLogin() != null) {
-                    client.sendMessage(loggingInController.getLoginCommand());
-                    System.out.println("Log: Login request sent");
-                    loggingInController.setLoginToNull();
-                    Platform.runLater(() -> loggingInController.getSomethingWentWrongLabel().setText("Wrong username or password."));
-                }
-            } else {
-                System.out.println("Log: Client logged in, closing login thread.");
-                loginListener.onClientLoggedIn();
-                break;
-            }
-        }*/

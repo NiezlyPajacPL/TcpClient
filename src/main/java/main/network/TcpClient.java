@@ -1,6 +1,8 @@
 package main.network;
 
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import main.managers.SubtitlesPrinter;
 
 import java.io.BufferedReader;
@@ -22,6 +24,7 @@ public class TcpClient implements Client {
     private boolean clientLoggedIn;
     private boolean clientConnected = false;
     private final ArrayList<String> usersList = new ArrayList<>();
+    private ObservableList<String> observableList = FXCollections.observableArrayList();
     private MessageListener messageListener;
 
     public TcpClient(String ip, int port, MessageListener messageListener) {
@@ -58,6 +61,7 @@ public class TcpClient implements Client {
             serverReceivedInput = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             String message = serverReceivedInput.readLine();
             updateClientList(message);
+            updateObservableList(message);
             clientIsLogged(message);
             if(isMessage(message)){
                 messageListener.onMessageReceived(message);
@@ -130,6 +134,19 @@ public class TcpClient implements Client {
         }
     }
 
+    private void updateObservableList(String receivedData){
+        if (receivedData.contains("Online users list:")) {
+            if(observableList!=null){
+                observableList.clear();
+            }
+            String[] words = receivedData.split(" ");
+
+            for (int i = 3; i < words.length; i++) {
+                observableList.add(words[i].replace("[","").replace("]","").replace(",",""));
+            }
+        }
+    }
+
     private void updateClientList(String receivedData) {
         if (receivedData.contains("Online users list:")) {
             usersList.clear();
@@ -152,5 +169,9 @@ public class TcpClient implements Client {
 
     public ArrayList<String> getUsersList() {
         return usersList;
+    }
+
+    public ObservableList<String> getObservableList() {
+        return observableList;
     }
 }
