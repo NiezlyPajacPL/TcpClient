@@ -26,7 +26,7 @@ import java.util.Map;
 
 public class Main extends Application {
     FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/login-view.fxml"));
-    static FXMLLoader clientLoader = new FXMLLoader(ClientScene.class.getResource("/Scenes/main-view.fxml"));
+    FXMLLoader clientLoader = new FXMLLoader(ClientScene.class.getResource("/Scenes/main-view.fxml"));
     LoginController loginController;
     static ClientSceneController clientSceneController;
     static Client client;

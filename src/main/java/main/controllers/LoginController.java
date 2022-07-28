@@ -43,32 +43,9 @@ public class LoginController {
     public void construct(Client client, LoginListener loginListener) {
         this.client = client;
         this.loginListener = loginListener;
-/*        loginThread = new LoginThread(client, loginListener, wrongPasswordListener);
-        thread = new Thread(loginThread);*/
     }
-
-
-/*
-    WrongPasswordListener wrongPasswordListener = () -> {
-        if (!somethingWentWrong.getText().equals("Wrong username or password.")) {
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    somethingWentWrong.setText("Wrong username or password.");
-                    passwordField.setText("");
-                }
-            });
-        }
-    };
-*/
-
     @FXML
     protected void onButtonClick() {
-/*        if (!thread.isAlive()) {
-            loginThread = new LoginThread(client, loginListener, wrongPasswordListener);
-            thread = new Thread(loginThread);
-            thread.start();
-        }*/
     if(!loginButton.getText().equals("Logging in...")) {
 
         login = loginField.getText();
