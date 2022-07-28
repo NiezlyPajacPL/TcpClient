@@ -30,7 +30,10 @@ public class ClientScene {
     public void display(){
         window.initModality(Modality.APPLICATION_MODAL);
         window.setTitle("PogChat");
-        window.setMinWidth(250);
+        window.setMinWidth(600);
+        window.setMinHeight(450);
+        window.setMaxWidth(640);
+        window.setMaxHeight(500);
 
         Scene scene = new Scene(fxmlLoader.getRoot());
         clientSceneController.construct((TcpClient) client,userName,openTabs);

@@ -148,7 +148,8 @@ public class TcpClient implements Client {
     private boolean isMessage(String message) {
         if ((Objects.equals(message, "Registered Successfully!") || message.contains("Hello again")) ||
                 message.equals("Successfully logged out. See you soon!") || message.contains("Online users list:") ||
-                message.equals("Something went wrong or client does not exist in our data base. Try again")){
+                message.equals("Something went wrong or client does not exist in our data base. Try again") ||
+                message.equals("Password does not match. Try again.")){
             return false;
         }
         return true;
