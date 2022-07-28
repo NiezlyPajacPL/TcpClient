@@ -57,6 +57,7 @@ public class Main extends Application {
                         }
                     });
                 } else {
+                    SoundHandler.playSound(SoundHandler.MESSAGE_IN_OPENED_TAB);
                     openTabs.get(sender).getTextArea().appendText(message + "\n");
                 }
             }
@@ -94,6 +95,7 @@ public class Main extends Application {
                         }
                     }
                 });
+                SoundHandler.playSound(SoundHandler.CONNECTED);
             }
         };
         loginController.construct(client, loginListener);
