@@ -1,5 +1,6 @@
 package main.controllers;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -46,7 +47,7 @@ public class ClientSceneController {
 
     @FXML
     protected void onRefresh() {
-        if(!refreshButton.getText().equals(REFRESHING)){
+        if (!refreshButton.getText().equals(REFRESHING)) {
             client.sendMessage(ALL_USERS_COMMAND);
             usersListView.getItems().clear();
             loadUsersList();
@@ -78,6 +79,17 @@ public class ClientSceneController {
             messageTextArea.clear();
         }
     }
+    @FXML
+    protected void menuOnLogout() {
+        client.sendMessage("/logout");
+        System.out.println("Client is logging out..");
+        Delay.delay(1000, new Runnable() {
+            @Override
+            public void run() {
+                Platform.exit();
+            }
+        });
+    }
 
     private void startSearchFilter() {
         userFilter = new FilteredList<>(observableList, s -> true);
@@ -96,13 +108,13 @@ public class ClientSceneController {
     }
 
     private void loadUsersList() {
-        if(!filterRunning){
+        if (!filterRunning) {
             client.sendMessage(ALL_USERS_COMMAND);
             observableList = FXCollections.observableList(client.getOnlineUsers());
             startSearchFilter();
             filterRunning = true;
-        }else{
-        refreshButton.setText(REFRESHING);
+        } else {
+            refreshButton.setText(REFRESHING);
             Delay.delay(2000, new Runnable() {
                 @Override
                 public void run() {

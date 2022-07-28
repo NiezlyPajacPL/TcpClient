@@ -8,9 +8,11 @@
    <top>
       <MenuBar maxHeight="-Infinity" minHeight="-Infinity" minWidth="-Infinity" BorderPane.alignment="CENTER">
         <menus>
-          <Menu mnemonicParsing="false" text="Edit">
+          <Menu mnemonicParsing="false" text="Menu">
             <items>
-              <MenuItem mnemonicParsing="false" text="Delete" />
+              <MenuItem mnemonicParsing="false" text="Settings" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#menuOnLogout" text="Logout" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Help">

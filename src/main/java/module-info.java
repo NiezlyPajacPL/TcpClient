@@ -10,6 +10,7 @@ module tcpklient.main {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
     requires javafx.graphics;
+    requires java.desktop;
 
     opens main to javafx.fxml;
     exports main;

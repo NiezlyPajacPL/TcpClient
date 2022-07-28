@@ -4,8 +4,12 @@ import main.network.Client;
 
 
 public class LoginThread implements Runnable {
+    @Override
+    public void run() {
 
-    Client client;
+    }
+
+/*    Client client;
     LoginListener loginListener;
     WrongPasswordListener wrongPasswordListener;
 
@@ -26,7 +30,7 @@ public class LoginThread implements Runnable {
                 break;
             }
         }
-    }
+    }*/
 }
 
 /*    private boolean clientConnected() {

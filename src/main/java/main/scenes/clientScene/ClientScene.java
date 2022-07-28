@@ -1,5 +1,6 @@
 package main.scenes.clientScene;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
@@ -14,20 +15,20 @@ public class ClientScene {
 
     Client client;
     String userName;
-    Stage window;
     private Map<String, MessagingTab> openTabs;
     FXMLLoader fxmlLoader;
     ClientSceneController clientSceneController;
-    public ClientScene(Client client,FXMLLoader fxmlLoader,ClientSceneController clientSceneController,String userName,Stage window,Map<String, MessagingTab> openTabs){
+
+    public ClientScene(Client client,FXMLLoader fxmlLoader,ClientSceneController clientSceneController,String userName,Map<String, MessagingTab> openTabs){
         this.client = client;
         this.fxmlLoader = fxmlLoader;
         this.userName = userName;
-        this.window = window;
         this.openTabs = openTabs;
         this.clientSceneController = clientSceneController;
     }
 
     public void display(){
+        Stage window = new Stage();
         window.initModality(Modality.APPLICATION_MODAL);
         window.setTitle("PogChat");
         window.setMinWidth(600);
@@ -42,7 +43,6 @@ public class ClientScene {
         window.show();
 
     }
-
     public ClientSceneController getClientSceneController() {
         return clientSceneController;
     }

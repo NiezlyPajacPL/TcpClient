@@ -1,6 +1,5 @@
 package main.controllers;
 
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -10,7 +9,6 @@ import main.managers.Delay;
 import main.network.Client;
 import main.scenes.login.LoginListener;
 import main.scenes.login.LoginThread;
-import main.scenes.login.WrongPasswordListener;
 
 
 public class LoginController {

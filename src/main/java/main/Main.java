@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import main.controllers.ClientSceneController;
 import main.helpers.MessagingTab;
 import main.helpers.TabCreator;
+import main.managers.SoundHandler;
 import main.managers.SubtitlesPrinter;
 import main.network.Client;
 import main.network.MessageListener;
@@ -29,7 +30,8 @@ public class Main extends Application {
     LoginController loginController;
     static ClientSceneController clientSceneController;
     static Client client;
-    Stage clientWindow = new Stage();
+    ClientScene clientScene;
+   // Stage clientWindow = new Stage();
     private static final Map<String, MessagingTab> openTabs = new HashMap<>();
 
 
@@ -51,12 +53,12 @@ public class Main extends Application {
                             clientSceneController.tabPane.getTabs().add(userTab);
                             openTabs.put(sender, new MessagingTab(userTab, textArea));
                             openTabs.get(sender).getTextArea().appendText(message + "\n");
+                            SoundHandler.playSound(SoundHandler.MESSAGE_INBOUND);
                         }
                     });
                 } else {
                     openTabs.get(sender).getTextArea().appendText(message + "\n");
                 }
-
             }
         };
         //  Scanner scan = new Scanner(System.in);
@@ -85,7 +87,7 @@ public class Main extends Application {
                         try {
                             clientLoader.load();
                             clientSceneController = clientLoader.getController();
-                            ClientScene clientScene = new ClientScene(client, clientLoader, clientSceneController, userName, clientWindow, openTabs);
+                            clientScene = new ClientScene(client, clientLoader, clientSceneController, userName, openTabs);
                             clientScene.display();
                         } catch (IOException e) {
                             e.printStackTrace();

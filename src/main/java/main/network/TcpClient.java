@@ -57,12 +57,14 @@ public class TcpClient implements Client {
         try {
             serverReceivedInput = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             String message = serverReceivedInput.readLine();
-            updateOnlineUsers(message);
-            clientIsLogged(message);
-            if(isMessage(message)){
-                messageListener.onMessageReceived(message);
-            }
-            SubtitlesPrinter.printReceivedMessage(message);
+           if(message!= null) {
+               updateOnlineUsers(message);
+               clientIsLogged(message);
+               if (isMessage(message)) {
+                   messageListener.onMessageReceived(message);
+               }
+               SubtitlesPrinter.printReceivedMessage(message);
+           }
         } catch (IOException e) {
             SubtitlesPrinter.printLostConnection();
             clientLoggedIn = false;
