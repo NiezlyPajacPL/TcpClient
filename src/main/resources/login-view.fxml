@@ -16,7 +16,7 @@
     </Label>
     <TextField fx:id="loginField" promptText="username" GridPane.columnIndex="1" GridPane.rowIndex="1" />
     <PasswordField fx:id="passwordField" promptText="password" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-   <Label fx:id="wrongPassword" textFill="#eb0000">
+   <Label fx:id="somethingWentWrong" textFill="#eb0000">
       <font>
          <Font name="System Bold" size="14.0" />
       </font>

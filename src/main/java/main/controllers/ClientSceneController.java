@@ -31,7 +31,6 @@ public class ClientSceneController {
         this.userName = userName;
         this.openTabs = openTabs;
         loadUsersList();
-     //   startSearchFilter();
     }
 
     @FXML
@@ -48,7 +47,7 @@ public class ClientSceneController {
     @FXML
     protected void onRefresh() {
         if(!refreshButton.getText().equals(REFRESHING)){
-            client.sendMessage(ALL_USERS_COMMAND);//
+            client.sendMessage(ALL_USERS_COMMAND);
             usersListView.getItems().clear();
             loadUsersList();
         }
@@ -99,7 +98,7 @@ public class ClientSceneController {
     private void loadUsersList() {
         if(!filterRunning){
             client.sendMessage(ALL_USERS_COMMAND);
-            observableList = FXCollections.observableList(client.getObservableList());
+            observableList = FXCollections.observableList(client.getOnlineUsers());
             startSearchFilter();
             filterRunning = true;
         }else{
@@ -107,7 +106,7 @@ public class ClientSceneController {
             Delay.delay(2000, new Runnable() {
                 @Override
                 public void run() {
-                    observableList = FXCollections.observableList(client.getObservableList());
+                    observableList = FXCollections.observableList(client.getOnlineUsers());
                     usersListView.getItems().addAll(userFilter);
                     refreshButton.setText(REFRESH);
                 }

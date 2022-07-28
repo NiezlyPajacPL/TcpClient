@@ -1,6 +1,5 @@
 package main.network;
 
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import main.managers.SubtitlesPrinter;
@@ -10,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.Objects;
 
 import static java.lang.Thread.sleep;
@@ -23,7 +21,7 @@ public class TcpClient implements Client {
     private final int port;
     private boolean clientLoggedIn;
     private boolean clientConnected = false;
-    private ObservableList<String> observableList = FXCollections.observableArrayList();
+    private ObservableList<String> onlineUsers = FXCollections.observableArrayList();
     private MessageListener messageListener;
 
     public TcpClient(String ip, int port, MessageListener messageListener) {
@@ -59,7 +57,7 @@ public class TcpClient implements Client {
         try {
             serverReceivedInput = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             String message = serverReceivedInput.readLine();
-            updateObservableList(message);
+            updateOnlineUsers(message);
             clientIsLogged(message);
             if(isMessage(message)){
                 messageListener.onMessageReceived(message);
@@ -68,6 +66,7 @@ public class TcpClient implements Client {
         } catch (IOException e) {
             SubtitlesPrinter.printLostConnection();
             clientLoggedIn = false;
+            clientConnected = false;
             tryReconnecting();
         }
     }
@@ -132,15 +131,15 @@ public class TcpClient implements Client {
         }
     }
 
-    private void updateObservableList(String receivedData){
+    private void updateOnlineUsers(String receivedData){
         if (receivedData.contains("Online users list:")) {
-            if(observableList!=null){
-                observableList.clear();
+            if(onlineUsers !=null){
+                onlineUsers.clear();
             }
             String[] words = receivedData.split(" ");
 
             for (int i = 3; i < words.length; i++) {
-                observableList.add(words[i].replace("[","").replace("]","").replace(",",""));
+                onlineUsers.add(words[i].replace("[","").replace("]","").replace(",",""));
             }
         }
     }
@@ -155,7 +154,7 @@ public class TcpClient implements Client {
         return true;
     }
 
-    public ObservableList<String> getObservableList() {
-        return observableList;
+    public ObservableList<String> getOnlineUsers() {
+        return onlineUsers;
     }
 }

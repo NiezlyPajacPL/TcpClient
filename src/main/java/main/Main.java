@@ -96,7 +96,7 @@ public class Main extends Application {
         };
         loginController.construct(client, loginListener);
 
-        stage.setMinWidth(350);
+        stage.setMinWidth(380);
         stage.setMinHeight(380);
         stage.setTitle("PogChat");
         stage.setScene(scene);
