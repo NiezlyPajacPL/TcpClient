@@ -1,5 +1,7 @@
 package main.network;
 
+import main.helpers.MessageData;
+
 public interface MessageListener {
-    void onMessageReceived(String message);
+    void onMessageReceived(MessageData messageData);
 }

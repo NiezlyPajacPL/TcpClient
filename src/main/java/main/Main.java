@@ -8,6 +8,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 import main.controllers.ClientSceneController;
+import main.helpers.MessageData;
 import main.helpers.MessagingTab;
 import main.helpers.TabCreator;
 import main.managers.SoundHandler;
@@ -36,29 +37,29 @@ public class Main extends Application {
 
 
     public static void main(String[] args) {
-        final String CONNECTION_IP = "127.0.0.1";
-        final int CONNECTION_PORT = 4445;
+        final String CONNECTION_IP = "109.207.149.50";
+        final int CONNECTION_PORT = 4446;
         MessageListener messageListener = new MessageListener() {
             @Override
-            public void onMessageReceived(String message) {
-                String sender = getSenderFromString(message);
+            public void onMessageReceived(MessageData messageData) {
+         //       String sender = getSenderFromString(message);
 
-                if (openTabs.get(sender) == null) {
+                if (openTabs.get(messageData.getSender()) == null) {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
                             TextArea textArea = new TextArea();
-                            Tab userTab = TabCreator.createTab(sender, textArea);
-                            userTab.setOnClosed(event -> openTabs.remove(sender));
+                            Tab userTab = TabCreator.createTab(messageData.getSender(), textArea);
+                            userTab.setOnClosed(event -> openTabs.remove(messageData.getSender()));
                             clientSceneController.tabPane.getTabs().add(userTab);
-                            openTabs.put(sender, new MessagingTab(userTab, textArea));
-                            openTabs.get(sender).getTextArea().appendText(message + "\n");
+                            openTabs.put(messageData.getSender(), new MessagingTab(userTab, textArea));
+                            openTabs.get(messageData.getSender()).getTextArea().appendText(messageData.getMessage() + "\n");
                             SoundHandler.playSound(SoundHandler.MESSAGE_INBOUND);
                         }
                     });
                 } else {
                     SoundHandler.playSound(SoundHandler.MESSAGE_IN_OPENED_TAB);
-                    openTabs.get(sender).getTextArea().appendText(message + "\n");
+                    openTabs.get(messageData.getSender()).getTextArea().appendText(messageData.getMessage() + "\n");
                 }
             }
         };
@@ -108,8 +109,4 @@ public class Main extends Application {
 
     }
 
-    private static String getSenderFromString(String string) {
-        String[] sender = string.split(" ");
-        return sender[0].replace(":", "");
-    }
 }

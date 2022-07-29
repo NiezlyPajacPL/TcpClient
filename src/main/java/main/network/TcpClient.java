@@ -2,6 +2,7 @@ package main.network;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import main.helpers.MessageData;
 import main.managers.SubtitlesPrinter;
 
 import java.io.BufferedReader;
@@ -55,13 +56,18 @@ public class TcpClient implements Client {
     @Override
     public void receiveMessage() {
         try {
+            //Waiting for server input
             serverReceivedInput = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             String message = serverReceivedInput.readLine();
            if(message!= null) {
-               updateOnlineUsers(message);
-               clientIsLogged(message);
+               if (message.contains("Online users list:")) {
+                   updateOnlineUsers(message);
+               }
+               isClientLogged(message);
                if (isMessage(message)) {
-                   messageListener.onMessageReceived(message);
+                   String sender = getSenderFromString(message);
+
+                   messageListener.onMessageReceived(new MessageData(sender,message));
                }
                SubtitlesPrinter.printReceivedMessage(message);
            }
@@ -125,7 +131,7 @@ public class TcpClient implements Client {
         return clientConnected;
     }
 
-    private void clientIsLogged(String receivedData) {
+    private void isClientLogged(String receivedData) {
         if ((Objects.equals(receivedData, "Registered Successfully!") || receivedData.contains("Hello again"))) {
             clientLoggedIn = true;
         } else if ((Objects.equals(receivedData, "Successfully logged out. See you soon!"))) {
@@ -134,7 +140,6 @@ public class TcpClient implements Client {
     }
 
     private void updateOnlineUsers(String receivedData){
-        if (receivedData.contains("Online users list:")) {
             if(onlineUsers !=null){
                 onlineUsers.clear();
             }
@@ -143,7 +148,7 @@ public class TcpClient implements Client {
             for (int i = 3; i < words.length; i++) {
                 onlineUsers.add(words[i].replace("[","").replace("]","").replace(",",""));
             }
-        }
+
     }
 
 
@@ -159,5 +164,10 @@ public class TcpClient implements Client {
 
     public ObservableList<String> getOnlineUsers() {
         return onlineUsers;
+    }
+
+    private static String getSenderFromString(String string) {
+        String[] sender = string.split(" ");
+        return sender[0].replace(":", "");
     }
 }
