@@ -59,18 +59,17 @@ public class TcpClient implements Client {
             //Waiting for server input
             serverReceivedInput = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             String message = serverReceivedInput.readLine();
-           if(message!= null) {
-               if (message.contains("Online users list:")) {
-                   updateOnlineUsers(message);
-               }
-               isClientLogged(message);
-               if (isMessage(message)) {
-                   String sender = getSenderFromString(message);
+            if (message != null) {
+                updateOnlineUsers(message);
 
-                   messageListener.onMessageReceived(new MessageData(sender,message));
-               }
-               SubtitlesPrinter.printReceivedMessage(message);
-           }
+                isClientLogged(message);
+                if (isMessage(message)) {
+                    String sender = getSenderFromString(message);
+
+                    messageListener.onMessageReceived(new MessageData(sender, message));
+                }
+                SubtitlesPrinter.printReceivedMessage(message);
+            }
         } catch (IOException e) {
             SubtitlesPrinter.printLostConnection();
             clientLoggedIn = false;
@@ -139,15 +138,17 @@ public class TcpClient implements Client {
         }
     }
 
-    private void updateOnlineUsers(String receivedData){
-            if(onlineUsers !=null){
+    private void updateOnlineUsers(String receivedData) {
+        if (receivedData.contains("Online users list:")) {
+            if (onlineUsers != null) {
                 onlineUsers.clear();
             }
             String[] words = receivedData.split(" ");
 
             for (int i = 3; i < words.length; i++) {
-                onlineUsers.add(words[i].replace("[","").replace("]","").replace(",",""));
+                onlineUsers.add(words[i].replace("[", "").replace("]", "").replace(",", ""));
             }
+        }
 
     }
 
@@ -156,7 +157,7 @@ public class TcpClient implements Client {
         if ((Objects.equals(message, "Registered Successfully!") || message.contains("Hello again")) ||
                 message.equals("Successfully logged out. See you soon!") || message.contains("Online users list:") ||
                 message.equals("Something went wrong or client does not exist in our data base. Try again") ||
-                message.equals("Password does not match. Try again.")){
+                message.equals("Password does not match. Try again.")) {
             return false;
         }
         return true;
