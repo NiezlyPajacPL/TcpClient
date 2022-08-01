@@ -20,7 +20,7 @@ public final class SubtitlesPrinter {
 
     public static void printRegistrationRequest(){
         println("Type '/register <YourNickname> <Password>");
-        println("or if you already have existing account Type '/login <YourNickname> <Password> ");
+        println("or if you already have existing account Type '/Login <YourNickname> <Password> ");
     }
 
     public static void printErrorMessageTooLarge(){print("Your message is too long.");}

@@ -42,7 +42,7 @@ public class Main extends Application {
         MessageListener messageListener = new MessageListener() {
             @Override
             public void onMessageReceived(MessageData messageData) {
-         //       String sender = getSenderFromString(message);
+         //       String sender = getSenderFromString(Login);
 
                 if (openTabs.get(messageData.getSender()) == null) {
                     Platform.runLater(new Runnable() {

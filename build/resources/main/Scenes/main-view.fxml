@@ -41,7 +41,7 @@
    <bottom>
       <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="50.0" minWidth="550.0" BorderPane.alignment="CENTER">
          <children>
-            <TextArea fx:id="messageTextArea" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="53.0" prefWidth="543.0" promptText="Type your message here..." />
+            <TextArea fx:id="messageTextArea" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="53.0" prefWidth="543.0" promptText="Type your messageData here..." />
             <Button mnemonicParsing="false" onAction="#onSendButtonClicked" prefHeight="53.0" prefWidth="58.0" text="SEND" />
          </children>
       </HBox>

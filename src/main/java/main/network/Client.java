@@ -4,7 +4,7 @@ public interface Client extends Runnable{
 
     void sendMessage(String message);
 
-    void receiveMessage();
+    String receiveMessage();
 
     void stopConnection();
 

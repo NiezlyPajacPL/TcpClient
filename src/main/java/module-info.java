@@ -11,6 +11,7 @@ module tcpklient.main {
     requires eu.hansolo.tilesfx;
     requires javafx.graphics;
     requires java.desktop;
+    requires com.google.gson;
 
     opens main to javafx.fxml;
     exports main;
@@ -20,4 +21,6 @@ module tcpklient.main {
     opens main.controllers to javafx.fxml;
     exports main.helpers;
     opens main.helpers to javafx.fxml;
+    exports main.messageTypes;
+    opens main.messageTypes to javafx.fxml;
 }

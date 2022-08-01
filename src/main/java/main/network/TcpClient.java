@@ -3,7 +3,9 @@ package main.network;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import main.helpers.MessageData;
+import main.managers.JsonMapperImpl;
 import main.managers.SubtitlesPrinter;
+import main.messageTypes.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -34,9 +36,27 @@ public class TcpClient implements Client {
     @Override
     public void run() {
         startConnection(ip, port);
+        JsonMapperImpl jsonMapper = new JsonMapperImpl();
+        MessageType messageType;
         while (true) {
             if (!clientSocket.isClosed()) {
-                receiveMessage();
+                String json = receiveMessage();
+                messageType = jsonMapper.mapJson(json);
+
+                if (messageType instanceof Login) {
+                    SubtitlesPrinter.printReceivedMessage((((Login) messageType).message));
+                    clientLoggedIn = true;
+                } else if (messageType instanceof Message message) {
+                    messageListener.onMessageReceived(new MessageData(message.sender, message.message)); // zamienic MessageData i Message w jedna klase
+                } else if (messageType instanceof UsersListReceiver) {
+                    updateOnlineUsers(((UsersListReceiver) messageType).users);
+                }else if(messageType instanceof Logout){
+                    SubtitlesPrinter.printReceivedMessage((((Logout) messageType).message));
+                    break;
+                }else if(messageType instanceof Register){
+                    SubtitlesPrinter.printReceivedMessage((((Register) messageType).message));
+                    clientLoggedIn = true;
+                }
             } else {
                 break;
             }
@@ -54,28 +74,31 @@ public class TcpClient implements Client {
     }
 
     @Override
-    public void receiveMessage() {
+    public String receiveMessage() {
         try {
             //Waiting for server input
             serverReceivedInput = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             String message = serverReceivedInput.readLine();
-            if (message != null) {
-                updateOnlineUsers(message);
 
-                isClientLogged(message);
-                if (isMessage(message)) {
-                    String sender = getSenderFromString(message);
+            return message;
+            /*if (Login != null) {
+                updateOnlineUsers(Login);
 
-                    messageListener.onMessageReceived(new MessageData(sender, message));
+                isClientLogged(Login);
+                if (isMessage(Login)) {
+                    String sender = getSenderFromString(Login);
+
+                    messageListener.onMessageReceived(new MessageData(sender, Login));
                 }
-                SubtitlesPrinter.printReceivedMessage(message);
-            }
+                SubtitlesPrinter.printReceivedMessage(Login);
+            }*/
         } catch (IOException e) {
             SubtitlesPrinter.printLostConnection();
             clientLoggedIn = false;
             clientConnected = false;
             tryReconnecting();
         }
+        return null;
     }
 
     @Override
@@ -139,7 +162,17 @@ public class TcpClient implements Client {
     }
 
     private void updateOnlineUsers(String receivedData) {
-        if (receivedData.contains("Online users list:")) {
+        if (onlineUsers != null) {
+            onlineUsers.clear();
+        }
+
+        String[] words = receivedData.split(" ");
+        for (int i = 0; i < words.length; i++) {
+            onlineUsers.add(words[i].replace("[", "").replace("]", "").replace(",", ""));
+        }
+
+
+/*        if (receivedData.contains("Online users list:")) {
             if (onlineUsers != null) {
                 onlineUsers.clear();
             }
@@ -147,9 +180,7 @@ public class TcpClient implements Client {
 
             for (int i = 3; i < words.length; i++) {
                 onlineUsers.add(words[i].replace("[", "").replace("]", "").replace(",", ""));
-            }
-        }
-
+            }*/
     }
 
 

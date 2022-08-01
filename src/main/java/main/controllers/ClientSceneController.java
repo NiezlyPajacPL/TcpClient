@@ -110,9 +110,17 @@ public class ClientSceneController {
     private void loadUsersList() {
         if (!filterRunning) {
             client.sendMessage(ALL_USERS_COMMAND);
-            observableList = FXCollections.observableList(client.getOnlineUsers());
-            startSearchFilter();
-            filterRunning = true;
+            refreshButton.setText(REFRESHING);
+            Delay.delay(2000, new Runnable() {
+                @Override
+                public void run() {
+                    observableList = FXCollections.observableList(client.getOnlineUsers());
+                    startSearchFilter();
+                    filterRunning = true;
+                    usersListView.getItems().addAll(userFilter);
+                    refreshButton.setText(REFRESH);
+                }
+            });
         } else {
             refreshButton.setText(REFRESHING);
             Delay.delay(2000, new Runnable() {

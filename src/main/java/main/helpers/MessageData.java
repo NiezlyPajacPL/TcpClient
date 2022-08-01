@@ -1,6 +1,8 @@
 package main.helpers;
 
-public class MessageData {
+import main.messageTypes.MessageType;
+
+public class MessageData{
     private final String sender;
     private final String message;
 
