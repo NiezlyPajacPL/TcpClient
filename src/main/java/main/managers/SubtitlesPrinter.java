@@ -1,12 +1,12 @@
 package main.managers;
 
 public final class SubtitlesPrinter {
+
     public static void printEnter(int enterCount){
         for(int i = 0; i < enterCount; i++){
             println("");
         }
     }
-
     public static void printHelper(){
         println("////////////POMOC////////////");
         println("Lista wszystkich uzytkownikow: /allUsers");

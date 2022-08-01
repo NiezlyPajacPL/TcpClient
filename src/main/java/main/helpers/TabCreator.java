@@ -1,7 +1,6 @@
 package main.helpers;
 
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 
 public class TabCreator {

@@ -26,13 +26,12 @@ import java.util.Map;
 
 
 public class Main extends Application {
-    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/login-view.fxml"));
-    FXMLLoader clientLoader = new FXMLLoader(ClientScene.class.getResource("/Scenes/main-view.fxml"));
-    LoginController loginController;
-    static ClientSceneController clientSceneController;
-    static Client client;
-    ClientScene clientScene;
-   // Stage clientWindow = new Stage();
+    private final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/login-view.fxml"));
+    private final FXMLLoader clientLoader = new FXMLLoader(ClientScene.class.getResource("/Scenes/main-view.fxml"));
+    private LoginController loginController;
+    private static ClientSceneController clientSceneController;
+    private static Client client;
+    private ClientScene clientScene;
     private static final Map<String, MessagingTab> openTabs = new HashMap<>();
 
 
@@ -42,8 +41,6 @@ public class Main extends Application {
         MessageListener messageListener = new MessageListener() {
             @Override
             public void onMessageReceived(MessageData messageData) {
-         //       String sender = getSenderFromString(Login);
-
                 if (openTabs.get(messageData.getSender()) == null) {
                     Platform.runLater(new Runnable() {
                         @Override

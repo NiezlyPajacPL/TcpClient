@@ -1,13 +1,11 @@
 package main.messageTypes;
 
 public class Message extends MessageType {
-    public Types type;
     public String sender;
     public String message;
 
-    public Message(Types type, String message, String sender) {
-        this.type = type;
-        this.message = message;
+    public Message(String sender, String message) {
+        this.sender = sender;
         this.message = message;
     }
 }

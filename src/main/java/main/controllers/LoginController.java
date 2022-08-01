@@ -15,9 +15,9 @@ public class LoginController {
 
     private String login;
     private String password;
-    final String LOGIN = "Log in!";
-    final String REGISTER = "Register!";
-    String loginType = LOGIN;
+    private final String LOGIN = "Log in!";
+    private final String REGISTER = "Register!";
+    private String loginType = LOGIN;
 
     public Client client;
     public LoginListener loginListener;
@@ -44,35 +44,36 @@ public class LoginController {
         this.client = client;
         this.loginListener = loginListener;
     }
+
     @FXML
     protected void onButtonClick() {
-    if(!loginButton.getText().equals("Logging in...")) {
+        if (!loginButton.getText().equals("Logging in...")) {
 
-        login = loginField.getText();
-        password = passwordField.getText();
-        if (client.isClientConnected()) {
-            loginButton.setText("Logging in..");
-            if (loginType.equals(LOGIN)) {
-                client.sendMessage(getLoginCommand());
-            } else if (loginType.equals(REGISTER)) {
-                client.sendMessage(getRegisterCommand());
-            }
-        }
-
-        Delay.delay(2000, new Runnable() {
-            @Override
-            public void run() {
-                if (!client.isClientConnected()) {
-                    onConnectionLost();
-                } else if (!client.isClientLoggedIn()) {
-                    onWrongPassword();
-                } else if (client.isClientLoggedIn()) {
-                    onSuccessfullyLogged();
+            login = loginField.getText();
+            password = passwordField.getText();
+            if (client.isClientConnected()) {
+                loginButton.setText("Logging in..");
+                if (loginType.equals(LOGIN)) {
+                    client.sendMessage(getLoginCommand());
+                } else if (loginType.equals(REGISTER)) {
+                    client.sendMessage(getRegisterCommand());
                 }
-                loginButton.setText(loginType);
             }
-        });
-    }
+
+            Delay.delay(2000, new Runnable() {
+                @Override
+                public void run() {
+                    if (!client.isClientConnected()) {
+                        onConnectionLost();
+                    } else if (!client.isClientLoggedIn()) {
+                        onWrongPassword();
+                    } else if (client.isClientLoggedIn()) {
+                        onSuccessfullyLogged();
+                    }
+                    loginButton.setText(loginType);
+                }
+            });
+        }
     }
 
     @FXML
@@ -117,7 +118,7 @@ public class LoginController {
         }
     }
 
-    private void onConnectionLost(){
+    private void onConnectionLost() {
         final String LOST_CONNECTION = "Connection has been lost. Trying to reconnect..";
         if (!somethingWentWrong.getText().equals(LOST_CONNECTION)) {
             somethingWentWrong.setText(LOST_CONNECTION);

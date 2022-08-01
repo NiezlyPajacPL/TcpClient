@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.Objects;
 
 import static java.lang.Thread.sleep;
 
@@ -47,13 +46,13 @@ public class TcpClient implements Client {
                     SubtitlesPrinter.printReceivedMessage((((Login) messageType).message));
                     clientLoggedIn = true;
                 } else if (messageType instanceof Message message) {
-                    messageListener.onMessageReceived(new MessageData(message.sender, message.message)); // zamienic MessageData i Message w jedna klase
+                    messageListener.onMessageReceived(new MessageData(message.sender, message.message)); //todo zamienic MessageData i Message w jedna klase
                 } else if (messageType instanceof UsersListReceiver) {
                     updateOnlineUsers(((UsersListReceiver) messageType).users);
-                }else if(messageType instanceof Logout){
+                } else if (messageType instanceof Logout) {
                     SubtitlesPrinter.printReceivedMessage((((Logout) messageType).message));
                     break;
-                }else if(messageType instanceof Register){
+                } else if (messageType instanceof Register) {
                     SubtitlesPrinter.printReceivedMessage((((Register) messageType).message));
                     clientLoggedIn = true;
                 }
@@ -78,20 +77,7 @@ public class TcpClient implements Client {
         try {
             //Waiting for server input
             serverReceivedInput = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            String message = serverReceivedInput.readLine();
-
-            return message;
-            /*if (Login != null) {
-                updateOnlineUsers(Login);
-
-                isClientLogged(Login);
-                if (isMessage(Login)) {
-                    String sender = getSenderFromString(Login);
-
-                    messageListener.onMessageReceived(new MessageData(sender, Login));
-                }
-                SubtitlesPrinter.printReceivedMessage(Login);
-            }*/
+            return serverReceivedInput.readLine();
         } catch (IOException e) {
             SubtitlesPrinter.printLostConnection();
             clientLoggedIn = false;
@@ -153,13 +139,6 @@ public class TcpClient implements Client {
         return clientConnected;
     }
 
-    private void isClientLogged(String receivedData) {
-        if ((Objects.equals(receivedData, "Registered Successfully!") || receivedData.contains("Hello again"))) {
-            clientLoggedIn = true;
-        } else if ((Objects.equals(receivedData, "Successfully logged out. See you soon!"))) {
-            clientLoggedIn = false;
-        }
-    }
 
     private void updateOnlineUsers(String receivedData) {
         if (onlineUsers != null) {
@@ -170,36 +149,10 @@ public class TcpClient implements Client {
         for (int i = 0; i < words.length; i++) {
             onlineUsers.add(words[i].replace("[", "").replace("]", "").replace(",", ""));
         }
-
-
-/*        if (receivedData.contains("Online users list:")) {
-            if (onlineUsers != null) {
-                onlineUsers.clear();
-            }
-            String[] words = receivedData.split(" ");
-
-            for (int i = 3; i < words.length; i++) {
-                onlineUsers.add(words[i].replace("[", "").replace("]", "").replace(",", ""));
-            }*/
-    }
-
-
-    private boolean isMessage(String message) {
-        if ((Objects.equals(message, "Registered Successfully!") || message.contains("Hello again")) ||
-                message.equals("Successfully logged out. See you soon!") || message.contains("Online users list:") ||
-                message.equals("Something went wrong or client does not exist in our data base. Try again") ||
-                message.equals("Password does not match. Try again.")) {
-            return false;
-        }
-        return true;
     }
 
     public ObservableList<String> getOnlineUsers() {
         return onlineUsers;
     }
 
-    private static String getSenderFromString(String string) {
-        String[] sender = string.split(" ");
-        return sender[0].replace(":", "");
-    }
 }

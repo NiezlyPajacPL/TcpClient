@@ -6,11 +6,11 @@ import main.managers.SubtitlesPrinter;
 import java.util.Scanner;
 
 public class InputReader extends Thread {
-    Scanner scan;
-    Client client;
-    SubtitlesPrinter subtitlesPrinter;
-    final String HELP = "/help";
-    final String LOGOUT = "/logout";
+    private final Scanner scan;
+    private final Client client;
+    private SubtitlesPrinter subtitlesPrinter;
+    private final String HELP = "/help";
+    private final String LOGOUT = "/logout";
 
     public InputReader(Scanner scan, Client client) {
         this.scan = scan;
@@ -27,7 +27,7 @@ public class InputReader extends Thread {
             } else if (message.contains(LOGOUT)) {
                 client.sendMessage(message);
                 break;
-            }else if(messageHelper.messageCanBeSent(message,client.isClientLoggedIn())){
+            } else if (messageHelper.messageCanBeSent(message, client.isClientLoggedIn())) {
                 client.sendMessage(message);
             }
         }

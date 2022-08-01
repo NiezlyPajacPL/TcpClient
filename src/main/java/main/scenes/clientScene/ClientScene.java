@@ -1,6 +1,5 @@
 package main.scenes.clientScene;
 
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
@@ -9,17 +8,18 @@ import main.controllers.ClientSceneController;
 import main.helpers.MessagingTab;
 import main.network.Client;
 import main.network.TcpClient;
+
 import java.util.Map;
 
 public class ClientScene {
 
-    Client client;
-    String userName;
-    private Map<String, MessagingTab> openTabs;
-    FXMLLoader fxmlLoader;
-    ClientSceneController clientSceneController;
+    private final Client client;
+    private final String userName;
+    private final Map<String, MessagingTab> openTabs;
+    private final FXMLLoader fxmlLoader;
+    private final ClientSceneController clientSceneController;
 
-    public ClientScene(Client client,FXMLLoader fxmlLoader,ClientSceneController clientSceneController,String userName,Map<String, MessagingTab> openTabs){
+    public ClientScene(Client client, FXMLLoader fxmlLoader, ClientSceneController clientSceneController, String userName, Map<String, MessagingTab> openTabs) {
         this.client = client;
         this.fxmlLoader = fxmlLoader;
         this.userName = userName;
@@ -27,7 +27,7 @@ public class ClientScene {
         this.clientSceneController = clientSceneController;
     }
 
-    public void display(){
+    public void display() {
         Stage window = new Stage();
         window.initModality(Modality.APPLICATION_MODAL);
         window.setTitle("PogChat");
@@ -37,12 +37,13 @@ public class ClientScene {
         window.setMaxHeight(500);
 
         Scene scene = new Scene(fxmlLoader.getRoot());
-        clientSceneController.construct((TcpClient) client,userName,openTabs);
+        clientSceneController.construct((TcpClient) client, userName, openTabs);
 
         window.setScene(scene);
         window.show();
 
     }
+
     public ClientSceneController getClientSceneController() {
         return clientSceneController;
     }

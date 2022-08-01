@@ -13,7 +13,6 @@ import main.network.TcpClient;
 
 import java.util.*;
 
-import static java.lang.Thread.sleep;
 
 public class ClientSceneController {
 
@@ -21,7 +20,7 @@ public class ClientSceneController {
     private ObservableList<String> observableList;
     private Map<String, MessagingTab> openTabs;
     private String userName;
-    FilteredList<String> userFilter;
+    private FilteredList<String> userFilter;
     boolean filterRunning = false;
     private final String REFRESHING = "REFRESHING...";
     private final String ALL_USERS_COMMAND = "/allUsers";
@@ -115,6 +114,7 @@ public class ClientSceneController {
                 @Override
                 public void run() {
                     observableList = FXCollections.observableList(client.getOnlineUsers());
+         //           observableList.remove(userName);
                     startSearchFilter();
                     filterRunning = true;
                     usersListView.getItems().addAll(userFilter);
@@ -127,6 +127,7 @@ public class ClientSceneController {
                 @Override
                 public void run() {
                     observableList = FXCollections.observableList(client.getOnlineUsers());
+           //         observableList.remove(userName);
                     usersListView.getItems().addAll(userFilter);
                     refreshButton.setText(REFRESH);
                 }
