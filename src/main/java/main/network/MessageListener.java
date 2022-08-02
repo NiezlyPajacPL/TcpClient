@@ -1,7 +1,9 @@
 package main.network;
 
-import main.helpers.MessageData;
+import main.messageTypes.Message;
 
 public interface MessageListener {
-    void onMessageReceived(MessageData messageData);
+    void onMessageReceived(Message messageData);
+
+//    void onLoginConfirmation();
 }

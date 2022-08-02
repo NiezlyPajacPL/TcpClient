@@ -2,7 +2,6 @@ package main.network;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import main.helpers.MessageData;
 import main.managers.JsonMapperImpl;
 import main.managers.SubtitlesPrinter;
 import main.messageTypes.*;
@@ -43,17 +42,17 @@ public class TcpClient implements Client {
                 messageType = jsonMapper.mapJson(json);
 
                 if (messageType instanceof Login) {
-                    SubtitlesPrinter.printReceivedMessage((((Login) messageType).message));
+                    SubtitlesPrinter.printReceivedMessage((((Login) messageType).getMessage()));
                     clientLoggedIn = true;
                 } else if (messageType instanceof Message message) {
-                    messageListener.onMessageReceived(new MessageData(message.sender, message.message)); //todo zamienic MessageData i Message w jedna klase
+                    messageListener.onMessageReceived(new Message(message.getSender(), message.getMessage()));
                 } else if (messageType instanceof UsersListReceiver) {
-                    updateOnlineUsers(((UsersListReceiver) messageType).users);
+                    updateOnlineUsers(((UsersListReceiver) messageType).getUsers());
                 } else if (messageType instanceof Logout) {
-                    SubtitlesPrinter.printReceivedMessage((((Logout) messageType).message));
+                    SubtitlesPrinter.printReceivedMessage((((Logout) messageType).getMessage()));
                     break;
                 } else if (messageType instanceof Register) {
-                    SubtitlesPrinter.printReceivedMessage((((Register) messageType).message));
+                    SubtitlesPrinter.printReceivedMessage((((Register) messageType).getMessage()));
                     clientLoggedIn = true;
                 }
             } else {

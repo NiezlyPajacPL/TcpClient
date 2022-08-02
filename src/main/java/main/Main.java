@@ -8,11 +8,11 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 import main.controllers.ClientSceneController;
-import main.helpers.MessageData;
 import main.helpers.MessagingTab;
 import main.helpers.TabCreator;
 import main.managers.SoundHandler;
 import main.managers.SubtitlesPrinter;
+import main.messageTypes.Message;
 import main.network.Client;
 import main.network.MessageListener;
 import main.network.TcpClient;
@@ -40,7 +40,7 @@ public class Main extends Application {
         final int CONNECTION_PORT = 4446;
         MessageListener messageListener = new MessageListener() {
             @Override
-            public void onMessageReceived(MessageData messageData) {
+            public void onMessageReceived(Message messageData) {
                 if (openTabs.get(messageData.getSender()) == null) {
                     Platform.runLater(new Runnable() {
                         @Override
