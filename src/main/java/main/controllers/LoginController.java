@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
 import main.network.TcpClient;
 import main.scenes.login.LoginListener;
 
@@ -21,9 +22,13 @@ public class LoginController {
     private final String REGISTER = "Register!";
     private final String WRONG_PASSWORD = "Wrong username or password.";
     private final String LOST_CONNECTION = "Connection has been lost. Trying to reconnect..";
+    private final String RECONNECTED = "Successfully reconnected.";
     private final String LOGGING_IN = "Logging in..";
-
     private String loginType = LOGIN;
+
+    private final Color RED = Color.color(1, 0, 0);
+    private final Color GREEN = Color.color(0, 1, 0);
+
 
     public TcpClient client;
     public LoginListener loginListener;
@@ -88,16 +93,20 @@ public class LoginController {
                 Thread thread = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        try {
-                            temp.start();
-                            temp.join();
-                            if (client.isClientLoggedIn()) {
-                                onSuccessfullyLogged();
-                            } else {
-                                onWrongPassword();
+                        if (client.isClientConnected()) {
+                            try {
+                                temp.start();
+                                temp.join();
+                                if (client.isClientLoggedIn()) {
+                                    onSuccessfullyLogged();
+                                } else if (!client.isClientLoggedIn()) {
+                                    onWrongPassword();
+                                }
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
                             }
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                        }else {
+                            onConnectionLost();
                         }
                     }
                 });
@@ -152,6 +161,8 @@ public class LoginController {
     private void onSuccessfullyLogged() {
         System.out.println("Log: Client logged in, closing login thread.");
         loginListener.onClientLoggedIn();
+        passwordField.setText("");
+        loginButton.setText(loginType);
     }
 
     private void onWrongPassword() {
@@ -165,8 +176,18 @@ public class LoginController {
     }
 
     private void onConnectionLost() {
-        if (!somethingWentWrong.getText().equals(LOST_CONNECTION)) {
-            somethingWentWrong.setText(LOST_CONNECTION);
-        }
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                if (!somethingWentWrong.getText().equals(LOST_CONNECTION)) {
+                    somethingWentWrong.setText(LOST_CONNECTION);
+                }
+            }
+        });
     }
+
+/*    private void onConnectionRenewed() {
+        somethingWentWrong.setText(RECONNECTED);
+        somethingWentWrong.setTextFill(GREEN);
+    }*/
 }

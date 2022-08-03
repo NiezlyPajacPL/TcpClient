@@ -63,6 +63,10 @@ public class Main extends Application {
                     openTabs.get(messageData.getSender()).getTextArea().appendText(messageData.getMessage() + "\n");
                 }
             }
+            @Override
+            public void onConnectionLost() {
+
+            }
         };
         //  Scanner scan = new Scanner(System.in);
         client = new TcpClient(CONNECTION_IP, CONNECTION_PORT, messageListener);

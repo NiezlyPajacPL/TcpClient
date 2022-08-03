@@ -55,7 +55,6 @@ public class TcpClient implements Client {
                     break;
                 } else if (messageType instanceof Register) {
                     System.out.println("Received login status");
-                    //  SubtitlesPrinter.printReceivedMessage((((Register) messageType).getMessage()));
                     messageArrived = true;
                     isClientLoggedIn = ((Register) messageType).isLoginSuccessful();
                 }
