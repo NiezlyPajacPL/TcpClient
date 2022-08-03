@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import main.controllers.ClientSceneController;
 import main.helpers.MessagingTab;
 import main.helpers.TabCreator;
+import main.managers.SettingsFileHandler;
 import main.managers.SoundHandler;
 import main.managers.SubtitlesPrinter;
 import main.messageTypes.Message;
@@ -20,6 +21,7 @@ import main.scenes.clientScene.ClientScene;
 import main.controllers.LoginController;
 import main.scenes.login.LoginListener;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +30,7 @@ import java.util.Map;
 public class Main extends Application {
     private final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/scenes/login-view.fxml"));
     private final FXMLLoader clientLoader = new FXMLLoader(ClientScene.class.getResource("/scenes/main-view.fxml"));
+    private static final String settingsFilePath = "src/main/resources/settings/settings.txt";
     private LoginController loginController;
     private static ClientSceneController clientSceneController;
     private static Client client;
@@ -36,8 +39,9 @@ public class Main extends Application {
 
 
     public static void main(String[] args) {
-        final String CONNECTION_IP = "109.207.149.50";
-        final int CONNECTION_PORT = 4446;
+        SettingsFileHandler settingsFileHandler = new SettingsFileHandler(settingsFilePath);
+        final String CONNECTION_IP = settingsFileHandler.getConnectionIP();
+        final int CONNECTION_PORT = settingsFileHandler.getConnectionPort();
         MessageListener messageListener = new MessageListener() {
             @Override
             public void onMessageReceived(Message messageData) {
