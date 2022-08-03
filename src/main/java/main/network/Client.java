@@ -1,6 +1,6 @@
 package main.network;
 
-public interface Client extends Runnable{
+public interface Client extends Runnable {
 
     void sendMessage(String message);
 
@@ -11,5 +11,5 @@ public interface Client extends Runnable{
     boolean isClientLoggedIn();
 
     boolean isClientConnected();
-
 }
+

@@ -16,6 +16,7 @@ public class MessageJsonDeserializer implements JsonDeserializer<MessageType> {
     private final String MESSAGE = "MESSAGE";
     private final String USERS = "users";
     private final String SENDER = "sender";
+    private final String IS_LOGIN_SUCCESSFUL = "isLoginSuccessful";
 
     @Override
     public MessageType deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
@@ -25,7 +26,7 @@ public class MessageJsonDeserializer implements JsonDeserializer<MessageType> {
         if (Objects.equals(type, REGISTER)) {
             return new Register(jsonObject.get(MESSAGE.toLowerCase(Locale.ROOT)).getAsString());
         } else if (Objects.equals(type, LOGIN)) {
-            return new Login(jsonObject.get(MESSAGE.toLowerCase(Locale.ROOT)).getAsString());
+            return new Login(jsonObject.get(IS_LOGIN_SUCCESSFUL).getAsBoolean());
         } else if (Objects.equals(type, ONLINE_USERS)) {
             return new UsersListReceiver(jsonObject.get(USERS).getAsString());
         } else if (Objects.equals(type, LOGOUT)) {

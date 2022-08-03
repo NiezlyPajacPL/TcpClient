@@ -96,7 +96,7 @@ public class Main extends Application {
                 SoundHandler.playSound(SoundHandler.CONNECTED);
             }
         };
-        loginController.construct(client, loginListener);
+        loginController.construct((TcpClient) client, loginListener);
 
         stage.setMinWidth(380);
         stage.setMinHeight(380);

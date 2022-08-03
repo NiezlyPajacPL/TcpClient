@@ -1,13 +1,13 @@
 package main.messageTypes;
 
 public class Login extends MessageType {
-    private final String message;
+    private final boolean isLoginSuccessful;
 
-    public Login(String message) {
-        this.message = message;
+    public Login(boolean isLoginSuccessful) {
+        this.isLoginSuccessful = isLoginSuccessful;
     }
 
-    public String getMessage() {
-        return message;
+    public boolean isLoginSuccessful() {
+        return isLoginSuccessful;
     }
 }

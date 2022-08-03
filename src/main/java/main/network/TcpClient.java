@@ -20,8 +20,9 @@ public class TcpClient implements Client {
     private BufferedReader serverReceivedInput;
     private final String ip;
     private final int port;
-    private boolean clientLoggedIn;
+    private boolean isClientLoggedIn;
     private boolean clientConnected = false;
+    public boolean messageArrived = false;
     private ObservableList<String> onlineUsers = FXCollections.observableArrayList();
     private MessageListener messageListener;
 
@@ -42,8 +43,14 @@ public class TcpClient implements Client {
                 messageType = jsonMapper.mapJson(json);
 
                 if (messageType instanceof Login) {
-                    SubtitlesPrinter.printReceivedMessage((((Login) messageType).getMessage()));
-                    clientLoggedIn = true;
+                    System.out.println("Received login status");
+                    messageArrived = true;
+                    //      SubtitlesPrinter.printReceivedMessage((((Login) messageType).getMessage()));
+                    if (((Login) messageType).isLoginSuccessful()) {
+                        isClientLoggedIn = true;
+                    } else {
+                        isClientLoggedIn = false;
+                    }
                 } else if (messageType instanceof Message message) {
                     messageListener.onMessageReceived(new Message(message.getSender(), message.getMessage()));
                 } else if (messageType instanceof UsersListReceiver) {
@@ -53,7 +60,7 @@ public class TcpClient implements Client {
                     break;
                 } else if (messageType instanceof Register) {
                     SubtitlesPrinter.printReceivedMessage((((Register) messageType).getMessage()));
-                    clientLoggedIn = true;
+                    isClientLoggedIn = true;
                 }
             } else {
                 break;
@@ -79,7 +86,7 @@ public class TcpClient implements Client {
             return serverReceivedInput.readLine();
         } catch (IOException e) {
             SubtitlesPrinter.printLostConnection();
-            clientLoggedIn = false;
+            isClientLoggedIn = false;
             clientConnected = false;
             tryReconnecting();
         }
@@ -130,7 +137,7 @@ public class TcpClient implements Client {
 
     @Override
     public boolean isClientLoggedIn() {
-        return clientLoggedIn;
+        return isClientLoggedIn;
     }
 
     @Override
