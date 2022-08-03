@@ -102,27 +102,6 @@ public class LoginController {
                         }
                     }
                 });
-
-/*
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    while (true){
-                        if(!temp.isAlive()){
-                            if(client.isClientLoggedIn()){
-                                System.out.println("tak");
-                                onSuccessfullyLogged();
-                            }else {
-                                System.out.println("nie");
-                                onWrongPassword();
-                            }
-                            break;
-                        }
-                    }
-                }
-            });
-*/
-
                 thread.start();
   /*          Delay.delay(2000, new Runnable() {
                 @Override

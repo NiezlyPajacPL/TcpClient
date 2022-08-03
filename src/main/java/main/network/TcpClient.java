@@ -45,12 +45,7 @@ public class TcpClient implements Client {
                 if (messageType instanceof Login) {
                     System.out.println("Received login status");
                     messageArrived = true;
-                    //      SubtitlesPrinter.printReceivedMessage((((Login) messageType).getMessage()));
-                    if (((Login) messageType).isLoginSuccessful()) {
-                        isClientLoggedIn = true;
-                    } else {
-                        isClientLoggedIn = false;
-                    }
+                    isClientLoggedIn = ((Login) messageType).isLoginSuccessful();
                 } else if (messageType instanceof Message message) {
                     messageListener.onMessageReceived(new Message(message.getSender(), message.getMessage()));
                 } else if (messageType instanceof UsersListReceiver) {
@@ -59,8 +54,10 @@ public class TcpClient implements Client {
                     SubtitlesPrinter.printReceivedMessage((((Logout) messageType).getMessage()));
                     break;
                 } else if (messageType instanceof Register) {
-                    SubtitlesPrinter.printReceivedMessage((((Register) messageType).getMessage()));
-                    isClientLoggedIn = true;
+                    System.out.println("Received login status");
+                    //  SubtitlesPrinter.printReceivedMessage((((Register) messageType).getMessage()));
+                    messageArrived = true;
+                    isClientLoggedIn = ((Register) messageType).isLoginSuccessful();
                 }
             } else {
                 break;

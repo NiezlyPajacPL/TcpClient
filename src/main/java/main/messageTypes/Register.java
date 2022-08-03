@@ -1,13 +1,13 @@
 package main.messageTypes;
 
 public class Register extends MessageType{
-    private final String message;
+    private final boolean isLoginSuccessful;
 
-    public Register(String message) {
-        this.message = message;
+    public Register(boolean isLoginSuccessful) {
+        this.isLoginSuccessful = isLoginSuccessful;
     }
 
-    public String getMessage() {
-        return message;
+    public boolean isLoginSuccessful() {
+        return isLoginSuccessful;
     }
 }
