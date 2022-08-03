@@ -90,7 +90,7 @@ public class ClientSceneController {
         });
     }
 
-    private void startSearchFilter() {
+    private void updateSearchFilter() {
         userFilter = new FilteredList<>(observableList, s -> true);
 
         searchField.textProperty().addListener(observable -> {
@@ -114,8 +114,8 @@ public class ClientSceneController {
                 @Override
                 public void run() {
                     observableList = FXCollections.observableList(client.getOnlineUsers());
-         //           observableList.remove(userName);
-                    startSearchFilter();
+                    observableList.remove(userName);
+                    updateSearchFilter();
                     filterRunning = true;
                     usersListView.getItems().addAll(userFilter);
                     refreshButton.setText(REFRESH);
@@ -127,7 +127,8 @@ public class ClientSceneController {
                 @Override
                 public void run() {
                     observableList = FXCollections.observableList(client.getOnlineUsers());
-           //         observableList.remove(userName);
+                    observableList.remove(userName);
+                    updateSearchFilter();
                     usersListView.getItems().addAll(userFilter);
                     refreshButton.setText(REFRESH);
                 }

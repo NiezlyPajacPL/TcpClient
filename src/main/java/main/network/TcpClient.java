@@ -147,7 +147,6 @@ public class TcpClient implements Client {
         if (onlineUsers != null) {
             onlineUsers.clear();
         }
-
         String[] words = receivedData.split(" ");
         for (int i = 0; i < words.length; i++) {
             onlineUsers.add(words[i].replace("[", "").replace("]", "").replace(",", ""));

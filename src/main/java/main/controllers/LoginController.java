@@ -19,9 +19,9 @@ public class LoginController {
     private String password;
     private final String LOGIN = "Log in!";
     private final String REGISTER = "Register!";
-    final String WRONG_PASSWORD = "Wrong username or password.";
-    final String LOST_CONNECTION = "Connection has been lost. Trying to reconnect..";
-
+    private final String WRONG_PASSWORD = "Wrong username or password.";
+    private final String LOST_CONNECTION = "Connection has been lost. Trying to reconnect..";
+    private final String LOGGING_IN = "Logging in..";
 
     private String loginType = LOGIN;
 
@@ -53,14 +53,13 @@ public class LoginController {
 
     @FXML
     protected void onButtonClick() {
-        if (!loginButton.getText().equals("Logging in...")) {
-
+        if (!loginButton.getText().equals(LOGGING_IN)) {
             login = loginField.getText();
             password = passwordField.getText();
 
-            if (login!= null && !login.equals("") && password != null && !password.equals("")) {
+            if (login != null && !login.equals("") && password != null && !password.equals("")) {
                 if (client.isClientConnected()) {
-                    loginButton.setText("Logging in..");
+                    loginButton.setText(LOGGING_IN);
                     if (loginType.equals(LOGIN)) {
                         client.sendMessage(getLoginCommand());
                     } else if (loginType.equals(REGISTER)) {
