@@ -1,17 +1,15 @@
-package main.managers;
+package main.managers.settings;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Scanner;
 
-public class SettingsFileHandler {
+public class ConnectionFileHandler {
 
     String filePath;
     File settings;
     Scanner scanner;
-    public SettingsFileHandler(String filePath) {
+    public ConnectionFileHandler(String filePath) {
         this.filePath = filePath;
         settings = new File(filePath);
         try {

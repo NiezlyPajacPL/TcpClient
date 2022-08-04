@@ -23,4 +23,5 @@ module tcpklient.main {
     opens main.helpers to javafx.fxml;
     exports main.messageTypes;
     opens main.messageTypes to javafx.fxml;
+    exports main.managers.settings;
 }

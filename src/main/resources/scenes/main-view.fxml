@@ -17,7 +17,7 @@
           </Menu>
           <Menu mnemonicParsing="false" text="Help">
             <items>
-              <MenuItem mnemonicParsing="false" text="About" />
+              <MenuItem mnemonicParsing="false" text="To start conversation, simply click on the user from the list or search for him in the searchbox." />
             </items>
           </Menu>
         </menus>
@@ -33,7 +33,7 @@
                <font>
                   <Font name="System Bold Italic" size="12.0" />
                </font></TextField>
-            <ListView fx:id="usersListView" editable="true" maxHeight="-Infinity" maxWidth="-Infinity" onMouseClicked="#handleMouseClick" />
+            <ListView fx:id="usersListView" blendMode="DARKEN" editable="true" maxHeight="-Infinity" maxWidth="-Infinity" onMouseClicked="#handleMouseClick" />
             <Button fx:id="refreshButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onRefresh" prefHeight="25.0" prefWidth="140.0" text="Refresh" />
          </children>
       </VBox>

@@ -26,15 +26,8 @@ public class LoginController {
     private final String LOGGING_IN = "Logging in..";
     private String loginType = LOGIN;
 
-    private final Color RED = Color.color(1, 0, 0);
-    private final Color GREEN = Color.color(0, 1, 0);
-
-
     public TcpClient client;
     public LoginListener loginListener;
-
-    private Thread thread;
-    protected String userName;
 
     @FXML
     protected Button switchRegisterButton;
@@ -76,7 +69,7 @@ public class LoginController {
                     public void run() {
                         while (true) {
                             try {
-                                sleep(100);
+                                sleep(1);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }

@@ -10,9 +10,10 @@ import javafx.stage.Stage;
 import main.controllers.ClientSceneController;
 import main.helpers.MessagingTab;
 import main.helpers.TabCreator;
-import main.managers.SettingsFileHandler;
+import main.managers.settings.ConnectionFileHandler;
 import main.managers.SoundHandler;
 import main.managers.SubtitlesPrinter;
+import main.managers.settings.SettingsHandler;
 import main.messageTypes.Message;
 import main.network.Client;
 import main.network.MessageListener;
@@ -21,7 +22,6 @@ import main.scenes.clientScene.ClientScene;
 import main.controllers.LoginController;
 import main.scenes.login.LoginListener;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,6 +30,7 @@ import java.util.Map;
 public class Main extends Application {
     private final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/scenes/login-view.fxml"));
     private final FXMLLoader clientLoader = new FXMLLoader(ClientScene.class.getResource("/scenes/main-view.fxml"));
+    private static final String connectionFilePath = "src/main/resources/settings/connectionIP.txt";
     private static final String settingsFilePath = "src/main/resources/settings/settings.txt";
     private LoginController loginController;
     private static ClientSceneController clientSceneController;
@@ -39,9 +40,12 @@ public class Main extends Application {
 
 
     public static void main(String[] args) {
-        SettingsFileHandler settingsFileHandler = new SettingsFileHandler(settingsFilePath);
-        final String CONNECTION_IP = settingsFileHandler.getConnectionIP();
-        final int CONNECTION_PORT = settingsFileHandler.getConnectionPort();
+        ConnectionFileHandler connectionFileHandler = new ConnectionFileHandler(connectionFilePath);
+        /*SettingsHandler settingsHandler = new SettingsHandler(settingsFilePath);
+        settingsHandler.setToDefault();*/
+
+        final String CONNECTION_IP = connectionFileHandler.getConnectionIP();
+        final int CONNECTION_PORT = connectionFileHandler.getConnectionPort();
         MessageListener messageListener = new MessageListener() {
             @Override
             public void onMessageReceived(Message messageData) {
@@ -62,10 +66,6 @@ public class Main extends Application {
                     SoundHandler.playSound(SoundHandler.MESSAGE_IN_OPENED_TAB);
                     openTabs.get(messageData.getSender()).getTextArea().appendText(messageData.getMessage() + "\n");
                 }
-            }
-            @Override
-            public void onConnectionLost() {
-
             }
         };
         //  Scanner scan = new Scanner(System.in);

@@ -41,7 +41,6 @@ public class ClientScene {
 
         window.setScene(scene);
         window.show();
-
     }
 
     public ClientSceneController getClientSceneController() {
