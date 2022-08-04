@@ -44,6 +44,25 @@ public class ClientSceneController {
     @FXML
     TextField searchField;
 
+    //TABS
+    public boolean isTabOpen(String sender){
+        return openTabs.get(sender) != null;
+    }
+
+    public void addNewTab(String user){
+        TextArea textArea = new TextArea();
+        Tab userTab = TabCreator.createTab(user, textArea);
+
+        userTab.setOnClosed(event -> openTabs.remove(user));
+        tabPane.getTabs().add(userTab);
+        openTabs.put(user, new MessagingTab(userTab, textArea));
+    }
+
+    public void printMessage(String sender,String message){
+        openTabs.get(sender).getTextArea().appendText(message + "\n");
+    }
+
+    //FXML
     @FXML
     protected void onRefresh() {
         if (!refreshButton.getText().equals(REFRESHING)) {
@@ -58,13 +77,8 @@ public class ClientSceneController {
         String user = usersListView.getSelectionModel().getSelectedItem();
         System.out.println("clicked on " + user);
 
-        if (user != null && !user.equals("") && openTabs.get(user) == null) {
-            TextArea textArea = new TextArea();
-            Tab userTab = TabCreator.createTab(user, textArea);
-
-            userTab.setOnClosed(event -> openTabs.remove(user));
-            tabPane.getTabs().add(userTab);
-            openTabs.put(user, new MessagingTab(userTab, textArea));
+        if (user != null && !user.equals("") && !isTabOpen(user)) {
+             addNewTab(user);
         }
     }
 
@@ -90,6 +104,7 @@ public class ClientSceneController {
         });
     }
 
+    //PRIVATE METHODS
     private void updateSearchFilter() {
         userFilter = new FilteredList<>(observableList, s -> true);
 

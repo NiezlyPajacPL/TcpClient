@@ -49,22 +49,19 @@ public class Main extends Application {
         MessageListener messageListener = new MessageListener() {
             @Override
             public void onMessageReceived(Message messageData) {
-                if (openTabs.get(messageData.getSender()) == null) {
+                String sender = messageData.getSender();
+                if (!clientSceneController.isTabOpen(sender)) {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            TextArea textArea = new TextArea();
-                            Tab userTab = TabCreator.createTab(messageData.getSender(), textArea);
-                            userTab.setOnClosed(event -> openTabs.remove(messageData.getSender()));
-                            clientSceneController.tabPane.getTabs().add(userTab);
-                            openTabs.put(messageData.getSender(), new MessagingTab(userTab, textArea));
-                            openTabs.get(messageData.getSender()).getTextArea().appendText(messageData.getMessage() + "\n");
+                            clientSceneController.addNewTab(sender);
+                            clientSceneController.printMessage(sender,messageData.getMessage());
                             SoundHandler.playSound(SoundHandler.MESSAGE_INBOUND);
                         }
                     });
                 } else {
                     SoundHandler.playSound(SoundHandler.MESSAGE_IN_OPENED_TAB);
-                    openTabs.get(messageData.getSender()).getTextArea().appendText(messageData.getMessage() + "\n");
+                    clientSceneController.printMessage(sender,messageData.getMessage());
                 }
             }
         };

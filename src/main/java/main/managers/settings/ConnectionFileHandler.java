@@ -6,9 +6,10 @@ import java.util.Scanner;
 
 public class ConnectionFileHandler {
 
-    String filePath;
-    File settings;
-    Scanner scanner;
+    private String filePath;
+    private File settings;
+    private Scanner scanner;
+
     public ConnectionFileHandler(String filePath) {
         this.filePath = filePath;
         settings = new File(filePath);
@@ -19,11 +20,11 @@ public class ConnectionFileHandler {
         }
     }
 
-    public String getConnectionIP(){
+    public String getConnectionIP() {
         return scanner.nextLine();
     }
 
-    public int getConnectionPort(){
+    public int getConnectionPort() {
         return scanner.nextInt();
     }
 }
