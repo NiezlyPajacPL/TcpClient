@@ -98,7 +98,7 @@ public class LoginController {
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
-                        }else {
+                        } else {
                             onConnectionLost();
                         }
                     }
@@ -154,8 +154,10 @@ public class LoginController {
     private void onSuccessfullyLogged() {
         System.out.println("Log: Client logged in, closing login thread.");
         loginListener.onClientLoggedIn();
-        passwordField.setText("");
-        loginButton.setText(loginType);
+        Platform.runLater(() -> {
+            passwordField.setText("");
+            loginButton.setText(loginType);
+        });
     }
 
     private void onWrongPassword() {
