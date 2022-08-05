@@ -17,19 +17,18 @@ import java.util.*;
 public class ClientSceneController {
 
     private TcpClient client;
-    private ObservableList<String> observableList;
-    private Map<String, MessagingTab> openTabs;
+    private ArrayList<String> onlineUsers;
+    private Map<String, MessagingTab> openTabs = new HashMap<>();
     private String userName;
-    private FilteredList<String> userFilter;
-    boolean filterRunning = false;
+    private ArrayList<String> filteredUsers = new ArrayList<>();
+    private boolean filterRunning = false;
     private final String REFRESHING = "REFRESHING...";
     private final String ALL_USERS_COMMAND = "/allUsers";
     private final String REFRESH = "Refresh";
 
-    public void construct(TcpClient client, String userName, Map<String, MessagingTab> openTabs) {
+    public void construct(TcpClient client, String userName) {
         this.client = client;
         this.userName = userName;
-        this.openTabs = openTabs;
         loadUsersList();
     }
 
@@ -45,11 +44,11 @@ public class ClientSceneController {
     TextField searchField;
 
     //TABS
-    public boolean isTabOpen(String sender){
+    public boolean isTabOpen(String sender) {
         return openTabs.get(sender) != null;
     }
 
-    public void addNewTab(String user){
+    public void addNewTab(String user) {
         TextArea textArea = new TextArea();
         Tab userTab = TabCreator.createTab(user, textArea);
 
@@ -58,7 +57,7 @@ public class ClientSceneController {
         openTabs.put(user, new MessagingTab(userTab, textArea));
     }
 
-    public void printMessage(String sender,String message){
+    public void printMessage(String sender, String message) {
         openTabs.get(sender).getTextArea().appendText(message + "\n");
     }
 
@@ -78,7 +77,7 @@ public class ClientSceneController {
         System.out.println("clicked on " + user);
 
         if (user != null && !user.equals("") && !isTabOpen(user)) {
-             addNewTab(user);
+            addNewTab(user);
         }
     }
 
@@ -92,6 +91,7 @@ public class ClientSceneController {
             messageTextArea.clear();
         }
     }
+
     @FXML
     protected void menuOnLogout() {
         client.sendMessage("/logout");
@@ -106,17 +106,25 @@ public class ClientSceneController {
 
     //PRIVATE METHODS
     private void updateSearchFilter() {
-        userFilter = new FilteredList<>(observableList, s -> true);
 
         searchField.textProperty().addListener(observable -> {
             String filter = searchField.getText();
-
-            if (filter == null || filter.length() == 0) {
-                userFilter.setPredicate(s -> true);
-            } else {
-                userFilter.setPredicate(s -> s.contains(filter));
+            if (filter == null || filter.length() == 0 || filter.equals("[\\s\u0000]")) {
                 usersListView.getItems().clear();
-                usersListView.getItems().addAll(userFilter);
+                usersListView.getItems().addAll(onlineUsers);
+            } else {
+                for (String onlineUser : onlineUsers) {
+                    if (onlineUser.contains(filter)) {
+                        filteredUsers.clear();
+                        filteredUsers.add(onlineUser);
+                        usersListView.getItems().clear();
+                        usersListView.getItems().addAll(filteredUsers);
+                    } else {
+                        filteredUsers.clear();
+                        usersListView.getItems().clear();
+                        usersListView.getItems().addAll(filteredUsers);
+                    }
+                }
             }
         });
     }
@@ -128,11 +136,11 @@ public class ClientSceneController {
             Delay.delay(2000, new Runnable() {
                 @Override
                 public void run() {
-                    observableList = FXCollections.observableList(client.getOnlineUsers());
-                    observableList.remove(userName);
+                    onlineUsers = client.getOnlineUsers();
+                    onlineUsers.remove(userName);
                     updateSearchFilter();
                     filterRunning = true;
-                    usersListView.getItems().addAll(userFilter);
+                    usersListView.getItems().addAll(onlineUsers);
                     refreshButton.setText(REFRESH);
                 }
             });
@@ -141,10 +149,10 @@ public class ClientSceneController {
             Delay.delay(2000, new Runnable() {
                 @Override
                 public void run() {
-                    observableList = FXCollections.observableList(client.getOnlineUsers());
-                    observableList.remove(userName);
+                    onlineUsers = client.getOnlineUsers();
+                    onlineUsers.remove(userName);
                     updateSearchFilter();
-                    usersListView.getItems().addAll(userFilter);
+                    usersListView.getItems().addAll(filteredUsers);
                     refreshButton.setText(REFRESH);
                 }
             });

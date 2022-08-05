@@ -87,7 +87,7 @@ public class Main extends Application {
                         try {
                             clientLoader.load();
                             clientSceneController = clientLoader.getController();
-                            clientScene = new ClientScene(client, clientLoader, clientSceneController, userName, openTabs);
+                            clientScene = new ClientScene(client, clientLoader, clientSceneController, userName);
                             clientScene.display();
                         } catch (IOException e) {
                             e.printStackTrace();

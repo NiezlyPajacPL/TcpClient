@@ -24,7 +24,8 @@ public class TcpClient implements Client {
     private boolean isClientLoggedIn;
     private boolean clientConnected = false;
     public boolean messageArrived = false;
-    private ObservableList<String> onlineUsers = FXCollections.observableArrayList();
+   // private ObservableList<String> onlineUsers = FXCollections.observableArrayList();
+    private ArrayList<String> onlineUsers;
     private MessageListener messageListener;
 
     public TcpClient(String ip, int port, MessageListener messageListener) {
@@ -50,8 +51,7 @@ public class TcpClient implements Client {
                 } else if (messageType instanceof Message message) {
                     messageListener.onMessageReceived(new Message(message.getSender(), message.getMessage()));
                 } else if (messageType instanceof UsersListReceiver) {
-                    ArrayList<String> usersList = ((UsersListReceiver) messageType).getUsers();
-                    System.out.println(usersList.get(0));
+                    onlineUsers = ((UsersListReceiver) messageType).getUsers();
                     //updateOnlineUsers(((UsersListReceiver) messageType).getUsers());
                 } else if (messageType instanceof Logout) {
                     SubtitlesPrinter.printReceivedMessage((((Logout) messageType).getMessage()));
@@ -155,7 +155,7 @@ public class TcpClient implements Client {
         }
     }
 
-    public ObservableList<String> getOnlineUsers() {
+    public ArrayList<String> getOnlineUsers() {
         return onlineUsers;
     }
 

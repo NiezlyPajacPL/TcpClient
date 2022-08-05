@@ -6,7 +6,7 @@ import main.messageTypes.*;
 
 public class JsonMapperImpl implements JsonMapper {
 
-    Gson gson = new GsonBuilder()
+    private Gson gson = new GsonBuilder()
             .registerTypeAdapter(MessageType.class, new MessageJsonDeserializer())
             .setPrettyPrinting()
             .create();
@@ -14,7 +14,7 @@ public class JsonMapperImpl implements JsonMapper {
     @Override
     public MessageType mapJson(String json) {
         System.out.println(json);
-        MessageType messageType = gson.fromJson(json,MessageType.class);
-        return gson.fromJson(json,MessageType.class);
+        MessageType messageType = gson.fromJson(json, MessageType.class);
+        return gson.fromJson(json, MessageType.class);
     }
 }

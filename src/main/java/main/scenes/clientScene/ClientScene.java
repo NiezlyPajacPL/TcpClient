@@ -15,15 +15,13 @@ public class ClientScene {
 
     private final Client client;
     private final String userName;
-    private final Map<String, MessagingTab> openTabs;
     private final FXMLLoader fxmlLoader;
     private final ClientSceneController clientSceneController;
 
-    public ClientScene(Client client, FXMLLoader fxmlLoader, ClientSceneController clientSceneController, String userName, Map<String, MessagingTab> openTabs) {
+    public ClientScene(Client client, FXMLLoader fxmlLoader, ClientSceneController clientSceneController, String userName) {
         this.client = client;
         this.fxmlLoader = fxmlLoader;
         this.userName = userName;
-        this.openTabs = openTabs;
         this.clientSceneController = clientSceneController;
     }
 
@@ -37,7 +35,7 @@ public class ClientScene {
         window.setMaxHeight(500);
 
         Scene scene = new Scene(fxmlLoader.getRoot());
-        clientSceneController.construct((TcpClient) client, userName, openTabs);
+        clientSceneController.construct((TcpClient) client, userName);
 
         window.setScene(scene);
         window.show();

@@ -33,7 +33,7 @@ public class MessageJsonDeserializer implements JsonDeserializer<MessageType> {
         } else if (Objects.equals(type, LOGOUT)) {
             return new Logout(jsonObject.get(MESSAGE.toLowerCase(Locale.ROOT)).getAsString());
         } else if (Objects.equals(type, MESSAGE)) {
-        return new Message(jsonObject.get(SENDER).getAsString(),jsonObject.get(MESSAGE.toLowerCase(Locale.ROOT)).getAsString());
+            return new Message(jsonObject.get(SENDER).getAsString(), jsonObject.get(MESSAGE.toLowerCase(Locale.ROOT)).getAsString());
         }
         return null;
     }

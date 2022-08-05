@@ -8,13 +8,14 @@ import java.io.*;
 
 public class TEMPSettingsHandler {
 
-    Gson gson = new GsonBuilder()
+    private Gson gson = new GsonBuilder()
             .setPrettyPrinting()
             .create();
 
-    String filePath;
-    FileWriter file;
-    FileReader settings;
+    private String filePath;
+    private FileWriter file;
+    private FileReader settings;
+
     public TEMPSettingsHandler(String filePath) {
         this.filePath = filePath;
         try {
@@ -26,16 +27,16 @@ public class TEMPSettingsHandler {
     }
 
     public void setToDefault() {
-        SettingsTemp settingsTemp = new SettingsTemp();
-        System.out.println(gson.toJson(settingsTemp));
+        TEMPSettings TEMPSettings = new TEMPSettings();
+        System.out.println(gson.toJson(TEMPSettings));
         try {
-            file.write(gson.toJson(settingsTemp));
+            file.write(gson.toJson(TEMPSettings));
         } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
 
-    public static SettingsTemp getSettings(){
+    public static TEMPSettings getSettings() {
         return null;
     }
 }

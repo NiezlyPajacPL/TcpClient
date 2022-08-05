@@ -1,16 +1,16 @@
 package main.managers.settings;
 
-public class SettingsTemp {
+public class TEMPSettings {
 
     public boolean disableSounds;
     public boolean something;
 
-    public SettingsTemp(boolean disableSounds, boolean something){
+    public TEMPSettings(boolean disableSounds, boolean something){
         this.disableSounds = disableSounds;
         this.something = something;
     }
 
-    public SettingsTemp(){
+    public TEMPSettings(){
         disableSounds = false;
         something = true;
     }
