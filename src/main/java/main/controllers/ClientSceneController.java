@@ -9,6 +9,7 @@ import javafx.scene.control.*;
 import main.helpers.MessagingTab;
 import main.helpers.TabCreator;
 import main.managers.Delay;
+import main.managers.settings.Settings;
 import main.network.TcpClient;
 
 import java.util.*;
@@ -25,13 +26,17 @@ public class ClientSceneController {
     private final String REFRESHING = "REFRESHING...";
     private final String ALL_USERS_COMMAND = "/allUsers";
     private final String REFRESH = "Refresh";
+    private Settings settings;
 
-    public void construct(TcpClient client, String userName) {
+    public void construct(TcpClient client, String userName,Settings settings) {
         this.client = client;
         this.userName = userName;
+        this.settings = settings;
         loadUsersList();
     }
 
+    @FXML
+    CheckMenuItem muteSounds;
     @FXML
     Button refreshButton;
     @FXML
@@ -102,6 +107,15 @@ public class ClientSceneController {
                 Platform.exit();
             }
         });
+    }
+
+    @FXML
+    protected void onMuteSounds(){
+        if(muteSounds.isSelected()){
+
+        }else {
+            System.out.println("Un-muted sounds");
+        }
     }
 
     //PRIVATE METHODS
