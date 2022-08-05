@@ -4,16 +4,12 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 import main.controllers.ClientSceneController;
 import main.helpers.MessagingTab;
-import main.helpers.TabCreator;
-import main.managers.settings.ConnectionFileHandler;
+import main.managers.settings.Settings;
 import main.managers.SoundHandler;
 import main.managers.SubtitlesPrinter;
-import main.managers.settings.SettingsHandler;
 import main.messageTypes.Message;
 import main.network.Client;
 import main.network.MessageListener;
@@ -40,12 +36,12 @@ public class Main extends Application {
 
 
     public static void main(String[] args) {
-        ConnectionFileHandler connectionFileHandler = new ConnectionFileHandler(connectionFilePath);
-        /*SettingsHandler settingsHandler = new SettingsHandler(settingsFilePath);
+        Settings settings = new Settings(connectionFilePath);
+        /*TEMPSettingsHandler settingsHandler = new TEMPSettingsHandler(settingsFilePath);
         settingsHandler.setToDefault();*/
 
-        final String CONNECTION_IP = connectionFileHandler.getConnectionIP();
-        final int CONNECTION_PORT = connectionFileHandler.getConnectionPort();
+        final String CONNECTION_IP = settings.getConnectionIP();
+        final int CONNECTION_PORT = settings.getConnectionPort();
         MessageListener messageListener = new MessageListener() {
             @Override
             public void onMessageReceived(Message messageData) {

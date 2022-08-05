@@ -1,17 +1,30 @@
 package main.managers.settings;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
 public class Settings {
 
-    public boolean disableSounds;
-    public boolean something;
+    private String filePath;
+    private File settings;
+    private Scanner scanner;
 
-    public Settings(boolean disableSounds,boolean something){
-        this.disableSounds = disableSounds;
-        this.something = something;
+    public Settings(String filePath) {
+        this.filePath = filePath;
+        settings = new File(filePath);
+        try {
+            scanner = new Scanner(settings);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
-    public Settings(){
-        disableSounds = false;
-        something = true;
+    public String getConnectionIP() {
+        return scanner.nextLine();
+    }
+
+    public int getConnectionPort() {
+        return scanner.nextInt();
     }
 }

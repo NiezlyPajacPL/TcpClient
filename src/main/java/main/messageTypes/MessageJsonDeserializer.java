@@ -14,7 +14,7 @@ public class MessageJsonDeserializer implements JsonDeserializer<MessageType> {
     private final String LOGOUT = "LOGOUT";
     private final String ONLINE_USERS = "ONLINE_USERS";
     private final String MESSAGE = "MESSAGE";
-    private final String USERS = "users";
+    private final String USERS = "usersList";
     private final String SENDER = "sender";
     private final String IS_LOGIN_SUCCESSFUL = "isLoginSuccessful";
     private final String IS_REGISTRATION_SUCCESSFUL = "isRegistrationSuccessful";
@@ -29,7 +29,7 @@ public class MessageJsonDeserializer implements JsonDeserializer<MessageType> {
         } else if (Objects.equals(type, LOGIN)) {
             return new Login(jsonObject.get(IS_LOGIN_SUCCESSFUL).getAsBoolean());
         } else if (Objects.equals(type, ONLINE_USERS)) {
-            return new UsersListReceiver(jsonObject.get(USERS).getAsString());
+            return new UsersListReceiver(jsonObject.get(USERS).getAsJsonArray());
         } else if (Objects.equals(type, LOGOUT)) {
             return new Logout(jsonObject.get(MESSAGE.toLowerCase(Locale.ROOT)).getAsString());
         } else if (Objects.equals(type, MESSAGE)) {

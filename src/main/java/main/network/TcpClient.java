@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 
 import static java.lang.Thread.sleep;
 
@@ -49,7 +50,9 @@ public class TcpClient implements Client {
                 } else if (messageType instanceof Message message) {
                     messageListener.onMessageReceived(new Message(message.getSender(), message.getMessage()));
                 } else if (messageType instanceof UsersListReceiver) {
-                    updateOnlineUsers(((UsersListReceiver) messageType).getUsers());
+                    ArrayList<String> usersList = ((UsersListReceiver) messageType).getUsers();
+                    System.out.println(usersList.get(0));
+                    //updateOnlineUsers(((UsersListReceiver) messageType).getUsers());
                 } else if (messageType instanceof Logout) {
                     SubtitlesPrinter.printReceivedMessage((((Logout) messageType).getMessage()));
                     break;
