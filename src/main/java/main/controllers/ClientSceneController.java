@@ -1,14 +1,12 @@
 package main.controllers;
 
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import main.helpers.MessagingTab;
 import main.helpers.TabCreator;
 import main.managers.Delay;
+import main.managers.Logger;
 import main.managers.settings.Settings;
 import main.network.TcpClient;
 
@@ -25,6 +23,7 @@ public class ClientSceneController {
     private boolean filterRunning = false;
     private final String REFRESHING = "REFRESHING...";
     private final String ALL_USERS_COMMAND = "/allUsers";
+    private final String LOGOUT = "/logout";
     private final String REFRESH = "Refresh";
     private Settings settings;
 
@@ -33,6 +32,9 @@ public class ClientSceneController {
         this.userName = userName;
         this.settings = settings;
         loadUsersList();
+        if(settings.isSoundMuted()){
+            muteSounds.setSelected(true);
+        }
     }
 
     @FXML
@@ -79,7 +81,7 @@ public class ClientSceneController {
     @FXML
     protected void handleMouseClick() {
         String user = usersListView.getSelectionModel().getSelectedItem();
-        System.out.println("clicked on " + user);
+        Logger.clickedOnUser(user);
 
         if (user != null && !user.equals("") && !isTabOpen(user)) {
             addNewTab(user);
@@ -99,8 +101,8 @@ public class ClientSceneController {
 
     @FXML
     protected void menuOnLogout() {
-        client.sendMessage("/logout");
-        System.out.println("Client is logging out..");
+        client.sendMessage(LOGOUT);
+        Logger.loggingOut();
         Delay.delay(1000, new Runnable() {
             @Override
             public void run() {
@@ -112,9 +114,11 @@ public class ClientSceneController {
     @FXML
     protected void onMuteSounds(){
         if(muteSounds.isSelected()){
-
+            Logger.mutedSounds();
+            settings.muteSounds();
         }else {
-            System.out.println("Un-muted sounds");
+            Logger.unMutedSounds();
+            settings.unMuteSounds();
         }
     }
 

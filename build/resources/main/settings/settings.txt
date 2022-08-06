@@ -1,5 +1,5 @@
 {
-  "disableSounds": false,
+  "disableSounds": true,
   "connectionIP": "109.207.149.50",
   "port": 4446
 }

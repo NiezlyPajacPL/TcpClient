@@ -26,21 +26,48 @@ public class Settings {
             setToDefault();
         }
     }
+
     public String getConnectionIP() {
         settingsObj = getSettings();
-        return settingsObj.connectionIP;
+        return settingsObj.getConnectionIP();
     }
 
-    public int getConnectionPort(){
+    public int getConnectionPort() {
         settingsObj = getSettings();
-        return settingsObj.port;
+        return settingsObj.getPort();
     }
 
-    public boolean soundsMuted() {
+    //SOUNDS
+    public boolean isSoundMuted() {
         settingsObj = getSettings();
-        return settingsObj.disableSounds;
+        return settingsObj.isSoundsDisabled();
     }
 
+    public void muteSounds() {
+        settingsObj = getSettings();
+        settingsObj.setDisableSounds(true);
+        try {
+            fileWriter = new FileWriter(file);
+            fileWriter.write(gson.toJson(settingsObj));
+            fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void unMuteSounds() {
+        settingsObj = getSettings();
+        settingsObj.setDisableSounds(false);
+        try {
+            fileWriter = new FileWriter(file);
+            fileWriter.write(gson.toJson(settingsObj));
+            fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //
     public void setToDefault() {
         try {
             fileWriter = new FileWriter(file);

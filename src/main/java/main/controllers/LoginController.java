@@ -2,12 +2,11 @@ package main.controllers;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.paint.Color;
+import main.managers.Logger;
 import main.network.TcpClient;
 import main.scenes.login.LoginListener;
 
@@ -20,7 +19,10 @@ public class LoginController {
     private String password;
     private final String LOGIN = "Log in!";
     private final String REGISTER = "Register!";
+    private final String LOGIN_COMMAND = "/login ";
+    private final String REGISTER_COMMAND = "/register ";
     private final String WRONG_PASSWORD = "Wrong username or password.";
+    private final String LOGIN_TOO_LONG = "Login can't exceed 20 characters";
     private final String LOST_CONNECTION = "Connection has been lost. Trying to reconnect..";
     private final String RECONNECTED = "Successfully reconnected.";
     private final String LOGGING_IN = "Logging in..";
@@ -64,46 +66,38 @@ public class LoginController {
                         client.sendMessage(getRegisterCommand());
                     }
                 }
-                Thread temp = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        while (true) {
-                            try {
-                                sleep(1);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            System.out.println("Attempting to log in");
-                            if (client.messageArrived) {
-                                System.out.println("closing temp");
-                                client.messageArrived = false;
-                                break;
-                            }
+                Thread thread = new Thread(() -> {
+                    while (true) {
+                        try {
+                            sleep(1);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        Logger.loginAttempt();
+                        if (client.messageArrived) {
+                            client.messageArrived = false;
+                            break;
                         }
                     }
                 });
-
-                Thread thread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (client.isClientConnected()) {
-                            try {
-                                temp.start();
-                                temp.join();
-                                if (client.isClientLoggedIn()) {
-                                    onSuccessfullyLogged();
-                                } else if (!client.isClientLoggedIn()) {
-                                    onWrongPassword();
-                                }
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
+                Thread loginThread = new Thread(() -> {
+                    if (client.isClientConnected()) {
+                        try {
+                            thread.start();
+                            thread.join();
+                            if (client.isClientLoggedIn()) {
+                                onSuccessfullyLogged();
+                            } else if (!client.isClientLoggedIn()) {
+                                onWrongPassword();
                             }
-                        } else {
-                            onConnectionLost();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
                         }
+                    } else {
+                        onConnectionLost();
                     }
                 });
-                thread.start();
+                loginThread.start();
   /*          Delay.delay(2000, new Runnable() {
                 @Override
                 public void run() {
@@ -117,8 +111,11 @@ public class LoginController {
                     loginButton.setText(loginType);
                 }
             });*/
+            }else if(login != null && login.length() < 20){
+                Platform.runLater(() -> {
+                    somethingWentWrong.setText(LOGIN_TOO_LONG);
+                });
             }
-
         }
     }
 
@@ -144,15 +141,15 @@ public class LoginController {
     }
 
     private String getLoginCommand() {
-        return "/login " + login + " " + password;
+        return LOGIN_COMMAND + login + " " + password;
     }
 
     private String getRegisterCommand() {
-        return "/register " + login + " " + password;
+        return REGISTER_COMMAND + login + " " + password;
     }
 
     private void onSuccessfullyLogged() {
-        System.out.println("Log: Client logged in, closing login thread.");
+        Logger.loggedIn();
         loginListener.onClientLoggedIn();
         Platform.runLater(() -> {
             passwordField.setText("");
@@ -171,12 +168,9 @@ public class LoginController {
     }
 
     private void onConnectionLost() {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                if (!somethingWentWrong.getText().equals(LOST_CONNECTION)) {
-                    somethingWentWrong.setText(LOST_CONNECTION);
-                }
+        Platform.runLater(() -> {
+            if (!somethingWentWrong.getText().equals(LOST_CONNECTION)) {
+                somethingWentWrong.setText(LOST_CONNECTION);
             }
         });
     }

@@ -19,8 +19,6 @@ import main.scenes.clientScene.ClientScene;
 import main.controllers.LoginController;
 import main.scenes.login.LoginListener;
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -35,12 +33,10 @@ public class Main extends Application {
     private static ClientSceneController clientSceneController;
     private static Client client;
     private ClientScene clientScene;
-    private static final Map<String, MessagingTab> openTabs = new HashMap<>();
     private static final Settings settings = new Settings(settingsFilePath);
     private final File icon = new File("src/main/resources/icon.png");
 
     public static void main(String[] args) {
-        //  settingsHandler.getSettings();
         final String CONNECTION_IP = settings.getConnectionIP();
         final int CONNECTION_PORT = settings.getConnectionPort();
 
@@ -54,13 +50,13 @@ public class Main extends Application {
                         public void run() {
                             clientSceneController.addNewTab(sender);
                             clientSceneController.printMessage(sender, messageData.getMessage());
-                            if (!settings.soundsMuted()) {
+                            if (!settings.isSoundMuted()) {
                                 SoundHandler.playSound(SoundHandler.MESSAGE_INBOUND);
                             }
                         }
                     });
                 } else {
-                    if (!settings.soundsMuted()) {
+                    if (!settings.isSoundMuted()) {
                         SoundHandler.playSound(SoundHandler.MESSAGE_IN_OPENED_TAB);
                     }
                     clientSceneController.printMessage(sender, messageData.getMessage());
@@ -93,14 +89,14 @@ public class Main extends Application {
                         try {
                             clientLoader.load();
                             clientSceneController = clientLoader.getController();
-                            clientScene = new ClientScene(client, clientLoader, clientSceneController, userName, settings,icon);
+                            clientScene = new ClientScene(client, clientLoader, clientSceneController, userName, settings, icon);
                             clientScene.display();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
                 });
-                if (!settings.soundsMuted()) {
+                if (!settings.isSoundMuted()) {
                     SoundHandler.playSound(SoundHandler.CONNECTED);
                 }
             }
