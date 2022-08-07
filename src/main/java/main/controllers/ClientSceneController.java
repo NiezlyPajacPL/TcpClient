@@ -1,6 +1,7 @@
 package main.controllers;
 
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import main.helpers.MessagingTab;
@@ -15,16 +16,18 @@ import java.util.*;
 
 public class ClientSceneController {
 
+    //const
+    private final String REFRESHING = "REFRESHING...";
+    private final String ALL_USERS_COMMAND = "/allUsers";
+    private final String LOGOUT = "/logout";
+    private final String REFRESH = "Refresh";
+
     private TcpClient client;
     private ArrayList<String> onlineUsers;
     private Map<String, MessagingTab> openTabs = new HashMap<>();
     private String userName;
     private ArrayList<String> filteredUsers = new ArrayList<>();
     private boolean filterRunning = false;
-    private final String REFRESHING = "REFRESHING...";
-    private final String ALL_USERS_COMMAND = "/allUsers";
-    private final String LOGOUT = "/logout";
-    private final String REFRESH = "Refresh";
     private Settings settings;
 
     public void construct(TcpClient client, String userName,Settings settings) {
@@ -64,7 +67,7 @@ public class ClientSceneController {
         openTabs.put(user, new MessagingTab(userTab, textArea));
     }
 
-    public void printMessage(String sender, String message) {
+    public void applyMessageToTab(String sender, String message) {
         openTabs.get(sender).getTextArea().appendText(message + "\n");
     }
 
@@ -83,7 +86,7 @@ public class ClientSceneController {
         String user = usersListView.getSelectionModel().getSelectedItem();
         Logger.clickedOnUser(user);
 
-        if (user != null && !user.equals("") && !isTabOpen(user)) {
+        if (!user.isBlank() && !isTabOpen(user)) {
             addNewTab(user);
         }
     }
@@ -124,23 +127,23 @@ public class ClientSceneController {
 
     //PRIVATE METHODS
     private void updateSearchFilter() {
-
         searchField.textProperty().addListener(observable -> {
             String filter = searchField.getText();
-            if (filter == null || filter.length() == 0 || filter.equals("[\\s\u0000]")) {
-                usersListView.getItems().clear();
-                usersListView.getItems().addAll(onlineUsers);
+            ObservableList<String> usersView = usersListView.getItems();
+            if (!filter.isBlank()) {
+                usersView.clear();
+                usersView.addAll(onlineUsers);
             } else {
                 for (String onlineUser : onlineUsers) {
                     if (onlineUser.contains(filter)) {
                         filteredUsers.clear();
                         filteredUsers.add(onlineUser);
-                        usersListView.getItems().clear();
-                        usersListView.getItems().addAll(filteredUsers);
+                        usersView.clear();
+                        usersView.addAll(filteredUsers);
                     } else {
                         filteredUsers.clear();
-                        usersListView.getItems().clear();
-                        usersListView.getItems().addAll(filteredUsers);
+                        usersView.clear();
+                        usersView.addAll(filteredUsers);
                     }
                 }
             }

@@ -15,20 +15,11 @@ import java.io.File;
 import java.util.Map;
 
 public class ClientScene {
-
-    private final Client client;
-    private final String userName;
     private final FXMLLoader fxmlLoader;
-    private final ClientSceneController clientSceneController;
-    private final Settings settings;
     private final File icon;
 
-    public ClientScene(Client client, FXMLLoader fxmlLoader, ClientSceneController clientSceneController, String userName,Settings settings,File icon) {
-        this.client = client;
+    public ClientScene(FXMLLoader fxmlLoader,File icon) {
         this.fxmlLoader = fxmlLoader;
-        this.userName = userName;
-        this.clientSceneController = clientSceneController;
-        this.settings = settings;
         this.icon = icon;
     }
 
@@ -44,13 +35,7 @@ public class ClientScene {
         window.setMaxHeight(500);
 
         Scene scene = new Scene(fxmlLoader.getRoot());
-        clientSceneController.construct((TcpClient) client, userName,settings);
-
         window.setScene(scene);
         window.show();
-    }
-
-    public ClientSceneController getClientSceneController() {
-        return clientSceneController;
     }
 }

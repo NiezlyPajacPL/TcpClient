@@ -7,7 +7,6 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import main.controllers.ClientSceneController;
-import main.helpers.MessagingTab;
 import main.managers.SoundHandler;
 import main.managers.SubtitlesPrinter;
 import main.managers.settings.Settings;
@@ -21,8 +20,6 @@ import main.scenes.login.LoginListener;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 
 public class Main extends Application {
@@ -49,7 +46,7 @@ public class Main extends Application {
                         @Override
                         public void run() {
                             clientSceneController.addNewTab(sender);
-                            clientSceneController.printMessage(sender, messageData.getMessage());
+                            clientSceneController.applyMessageToTab(sender, messageData.getMessage());
                             if (!settings.isSoundMuted()) {
                                 SoundHandler.playSound(SoundHandler.MESSAGE_INBOUND);
                             }
@@ -59,7 +56,7 @@ public class Main extends Application {
                     if (!settings.isSoundMuted()) {
                         SoundHandler.playSound(SoundHandler.MESSAGE_IN_OPENED_TAB);
                     }
-                    clientSceneController.printMessage(sender, messageData.getMessage());
+                    clientSceneController.applyMessageToTab(sender, messageData.getMessage());
                 }
             }
         };
@@ -89,7 +86,9 @@ public class Main extends Application {
                         try {
                             clientLoader.load();
                             clientSceneController = clientLoader.getController();
-                            clientScene = new ClientScene(client, clientLoader, clientSceneController, userName, settings, icon);
+                            clientSceneController.construct((TcpClient) client, userName,settings);
+
+                            clientScene = new ClientScene(clientLoader,icon);
                             clientScene.display();
                         } catch (IOException e) {
                             e.printStackTrace();

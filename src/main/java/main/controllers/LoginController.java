@@ -17,26 +17,30 @@ public class LoginController {
 
     private String login;
     private String password;
-    private final String LOGIN = "Log in!";
-    private final String REGISTER = "Register!";
+    //BUTTONS
+    private final String LOGIN_BUTTON_TEXT = "Log in!";
+    private final String REGISTER_BUTTON_TEXT = "Register!";
+    private final String LOGGING_IN_BUTTON_TEXT = "Logging in..";
+    //COMMANDS
     private final String LOGIN_COMMAND = "/login ";
     private final String REGISTER_COMMAND = "/register ";
+    //STH WENT WRONG TEXT
     private final String WRONG_PASSWORD = "Wrong username or password.";
     private final String LOGIN_TOO_LONG = "Login can't exceed 20 characters";
     private final String LOST_CONNECTION = "Connection has been lost. Trying to reconnect..";
     private final String RECONNECTED = "Successfully reconnected.";
-    private final String LOGGING_IN = "Logging in..";
-    private String loginType = LOGIN;
 
-    public TcpClient client;
-    public LoginListener loginListener;
+    private String actionType = LOGIN_BUTTON_TEXT;
+
+    private TcpClient client;
+    private LoginListener loginListener;
 
     @FXML
     protected Button switchRegisterButton;
     @FXML
     public Label connectionProblems;
     @FXML
-    protected Label changeLoginTypeLabel; //Label name to change
+    protected Label changeActionTypeLabel;
     @FXML
     protected Label somethingWentWrong;
     @FXML
@@ -53,26 +57,21 @@ public class LoginController {
 
     @FXML
     protected void onButtonClick() {
-        if (!loginButton.getText().equals(LOGGING_IN)) {
+        if (!loginButton.getText().equals(LOGGING_IN_BUTTON_TEXT)) {
             login = loginField.getText();
             password = passwordField.getText();
 
             if (login != null && !login.equals("") && password != null && !password.equals("")) {
                 if (client.isClientConnected()) {
-                    loginButton.setText(LOGGING_IN);
-                    if (loginType.equals(LOGIN)) {
+                    loginButton.setText(LOGGING_IN_BUTTON_TEXT);
+                    if (actionType.equals(LOGIN_BUTTON_TEXT)) {
                         client.sendMessage(getLoginCommand());
-                    } else if (loginType.equals(REGISTER)) {
+                    } else if (actionType.equals(REGISTER_BUTTON_TEXT)) {
                         client.sendMessage(getRegisterCommand());
                     }
                 }
                 Thread thread = new Thread(() -> {
                     while (true) {
-                        try {
-                            sleep(1);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
                         Logger.loginAttempt();
                         if (client.messageArrived) {
                             client.messageArrived = false;
@@ -98,19 +97,6 @@ public class LoginController {
                     }
                 });
                 loginThread.start();
-  /*          Delay.delay(2000, new Runnable() {
-                @Override
-                public void run() {
-                    if (!client.isClientConnected()) {
-                        onConnectionLost();
-                    } else if (!client.isClientLoggedIn()) {
-                        onWrongPassword();
-                    } else if (client.isClientLoggedIn()) {
-                        onSuccessfullyLogged();
-                    }
-                    loginButton.setText(loginType);
-                }
-            });*/
             }else if(login != null && login.length() < 20){
                 Platform.runLater(() -> {
                     somethingWentWrong.setText(LOGIN_TOO_LONG);
@@ -121,16 +107,16 @@ public class LoginController {
 
     @FXML
     protected void onSwitchButtonClick() {
-        if (loginType.equals(LOGIN)) {
-            loginType = REGISTER;
-            loginButton.setText(REGISTER);
+        if (actionType.equals(LOGIN_BUTTON_TEXT)) {
+            actionType = REGISTER_BUTTON_TEXT;
+            loginButton.setText(REGISTER_BUTTON_TEXT);
             switchRegisterButton.setText("Switch to login");
-            changeLoginTypeLabel.setText("If you have an existing account click here:");
+            changeActionTypeLabel.setText("If you have an existing account click here:");
         } else {
-            loginType = LOGIN;
-            loginButton.setText(LOGIN);
+            actionType = LOGIN_BUTTON_TEXT;
+            loginButton.setText(LOGIN_BUTTON_TEXT);
             switchRegisterButton.setText("Switch to register");
-            changeLoginTypeLabel.setText("If you don't have account yet, register click here:");
+            changeActionTypeLabel.setText("If you don't have account yet, register click here:");
         }
 
     }
@@ -153,7 +139,7 @@ public class LoginController {
         loginListener.onClientLoggedIn();
         Platform.runLater(() -> {
             passwordField.setText("");
-            loginButton.setText(loginType);
+            loginButton.setText(actionType);
         });
     }
 
@@ -163,7 +149,7 @@ public class LoginController {
                 somethingWentWrong.setText(WRONG_PASSWORD);
             }
             passwordField.setText("");
-            loginButton.setText(loginType);
+            loginButton.setText(actionType);
         });
     }
 

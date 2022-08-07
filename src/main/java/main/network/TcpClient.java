@@ -1,7 +1,5 @@
 package main.network;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import main.managers.JsonMapperImpl;
 import main.managers.SubtitlesPrinter;
 import main.messageTypes.*;
@@ -36,7 +34,7 @@ public class TcpClient implements Client {
 
     @Override
     public void run() {
-        startConnection(ip, port);
+        connect(ip, port);
         JsonMapperImpl jsonMapper = new JsonMapperImpl();
         MessageType messageType;
         while (true) {
@@ -67,13 +65,20 @@ public class TcpClient implements Client {
         }
     }
 
-    private void startConnection(String ip, int port) {
+    private void connect(String ip, int port) {
         try {
             clientSocket = new Socket(ip, port);
+            SubtitlesPrinter.printConnectionEstablished();
             clientConnected = true;
         } catch (IOException e) {
             SubtitlesPrinter.printConnectionProblems();
-            tryReconnecting();
+            SubtitlesPrinter.printReconnectingUnsuccessful();
+            try {
+                sleep(5000);
+                connect(ip,port);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
@@ -87,7 +92,7 @@ public class TcpClient implements Client {
             SubtitlesPrinter.printLostConnection();
             isClientLoggedIn = false;
             clientConnected = false;
-            tryReconnecting();
+            connect(ip,port);
         }
         return null;
     }
@@ -113,27 +118,6 @@ public class TcpClient implements Client {
         }
     }
 
-    private void tryReconnecting() {
-        try {
-            System.gc();
-            clientSocket = new Socket(ip, port);
-            SubtitlesPrinter.printConnectionEstablished();
-            SubtitlesPrinter.printEnter(5);
-            SubtitlesPrinter.printRegistrationRequest();
-            SubtitlesPrinter.printIsHelpNeeded();
-            clientConnected = true;
-        } catch (IOException e) {
-            SubtitlesPrinter.printReconnectingUnsuccessful();
-            try {
-                sleep(5000);
-                tryReconnecting();
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
-            }
-        }
-
-    }
-
     @Override
     public boolean isClientLoggedIn() {
         return isClientLoggedIn;
@@ -142,17 +126,6 @@ public class TcpClient implements Client {
     @Override
     public boolean isClientConnected() {
         return clientConnected;
-    }
-
-
-    private void updateOnlineUsers(String receivedData) {
-        if (onlineUsers != null) {
-            onlineUsers.clear();
-        }
-        String[] words = receivedData.split(" ");
-        for (int i = 0; i < words.length; i++) {
-            onlineUsers.add(words[i].replace("[", "").replace("]", "").replace(",", ""));
-        }
     }
 
     public ArrayList<String> getOnlineUsers() {
