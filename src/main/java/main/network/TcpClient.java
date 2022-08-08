@@ -50,6 +50,7 @@ public class TcpClient implements Client {
                     messageListener.onMessageReceived(new Message(message.getSender(), message.getMessage()));
                 } else if (messageType instanceof UsersListReceiver) {
                     onlineUsers = ((UsersListReceiver) messageType).getUsers();
+                    messageListener.onUsersListReceived();
                 } else if (messageType instanceof Logout) {
                     SubtitlesPrinter.printReceivedMessage((((Logout) messageType).getMessage()));
                     break;

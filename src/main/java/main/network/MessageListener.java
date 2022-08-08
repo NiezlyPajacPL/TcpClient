@@ -4,4 +4,8 @@ import main.messageTypes.Message;
 
 public interface MessageListener {
     void onMessageReceived(Message messageData);
+
+    void onUsersListReceived();
+
+    void onLogout();
 }

@@ -5,25 +5,23 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import java.io.File;
 
 public class ClientScene {
     private final FXMLLoader fxmlLoader;
-    private final File icon;
-    private final String title;
+    private final Image applicationIcon;
+    private final String applicationTitle;
 
-    public ClientScene(FXMLLoader fxmlLoader,File icon,String title) {
+    public ClientScene(FXMLLoader fxmlLoader,Image applicationIcon,String applicationTitle) {
         this.fxmlLoader = fxmlLoader;
-        this.icon = icon;
-        this.title = title;
+        this.applicationIcon = applicationIcon;
+        this.applicationTitle = applicationTitle;
     }
 
     public void display() {
         Stage window = new Stage();
-        Image image = new Image(icon.toURI().toString());
         window.initModality(Modality.APPLICATION_MODAL);
-        window.setTitle(title);
-        window.getIcons().add(image);
+        window.setTitle(applicationTitle);
+        window.getIcons().add(applicationIcon);
         window.setMinWidth(600);
         window.setMinHeight(450);
         window.setMaxWidth(640);

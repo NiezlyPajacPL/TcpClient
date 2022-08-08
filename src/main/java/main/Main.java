@@ -32,7 +32,7 @@ public class Main extends Application {
     private static Client client;
     private ClientScene clientScene;
     private static final Settings settings = new Settings(settingsFilePath);
-    private final File icon = new File("src/main/resources/icon.png");
+    private final Image applicationIcon = new Image(new File("src/main/resources/icon.png").toURI().toString());
     private final String applicationTitle = "PogChat";
 
     public static void main(String[] args) {
@@ -65,7 +65,7 @@ public class Main extends Application {
                             clientSceneController = clientLoader.getController();
                             clientSceneController.construct((TcpClient) client, userName,settings);
 
-                            clientScene = new ClientScene(clientLoader,icon,applicationTitle);
+                            clientScene = new ClientScene(clientLoader,applicationIcon,applicationTitle);
                             clientScene.display();
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -79,11 +79,10 @@ public class Main extends Application {
         };
 
         loginController.construct((TcpClient) client, loginListener);
-        Image image = new Image(icon.toURI().toString());
         stage.setMinWidth(380);
         stage.setMinHeight(380);
         stage.setTitle(applicationTitle);
-        stage.getIcons().add(image);
+        stage.getIcons().add(applicationIcon);
         stage.setScene(scene);
         stage.show();
     }
