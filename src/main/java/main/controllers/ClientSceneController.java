@@ -8,7 +8,10 @@ import main.helpers.MessagingTab;
 import main.helpers.TabCreator;
 import main.managers.Delay;
 import main.managers.Logger;
+import main.managers.SoundHandler;
 import main.managers.settings.Settings;
+import main.messageTypes.Message;
+import main.network.MessageListener;
 import main.network.TcpClient;
 
 import java.util.*;
@@ -30,18 +33,22 @@ public class ClientSceneController {
     private boolean filterRunning = false;
     private Settings settings;
 
-    public void construct(TcpClient client, String userName,Settings settings) {
+    private boolean isRefreshingInProgress = false;
+    private String currentFilter;
+
+    public void construct(TcpClient client, String userName, Settings settings) {
         this.client = client;
         this.userName = userName;
         this.settings = settings;
         loadUsersList();
-        if(settings.isSoundMuted()){
-            muteSounds.setSelected(true);
+        if (settings.isSoundMuted()) {
+            muteSoundsCheckBox.setSelected(true);
         }
+        client.setMessageListener(messageData -> handleIncomingMessage(messageData));
     }
 
     @FXML
-    CheckMenuItem muteSounds;
+    CheckMenuItem muteSoundsCheckBox;
     @FXML
     Button refreshButton;
     @FXML
@@ -53,31 +60,15 @@ public class ClientSceneController {
     @FXML
     TextField searchField;
 
-    //TABS
-    public boolean isTabOpen(String sender) {
-        return openTabs.get(sender) != null;
-    }
-
-    public void addNewTab(String user) {
-        TextArea textArea = new TextArea();
-        Tab userTab = TabCreator.createTab(user, textArea);
-
-        userTab.setOnClosed(event -> openTabs.remove(user));
-        tabPane.getTabs().add(userTab);
-        openTabs.put(user, new MessagingTab(userTab, textArea));
-    }
-
-    public void applyMessageToTab(String sender, String message) {
-        openTabs.get(sender).getTextArea().appendText(message + "\n");
-    }
-
     //FXML
     @FXML
     protected void onRefresh() {
-        if (!refreshButton.getText().equals(REFRESHING)) {
+        if (!isRefreshingInProgress) {
+            isRefreshingInProgress = true;
             client.sendMessage(ALL_USERS_COMMAND);
             usersListView.getItems().clear();
             loadUsersList();
+            isRefreshingInProgress = false;
         }
     }
 
@@ -95,7 +86,7 @@ public class ClientSceneController {
     protected void onSendButtonClicked() {
         String receiver = getUserFromOpenedTab();
         String message = messageTextArea.getText();
-        if (receiver != null && message != null) {
+        if (messageCanBeSent(receiver, message)) {
             client.sendMessage(messageCommand(receiver, message));
             openTabs.get(receiver).getTextArea().appendText(userName + ": " + message + "\n");
             messageTextArea.clear();
@@ -115,17 +106,23 @@ public class ClientSceneController {
     }
 
     @FXML
-    protected void onMuteSounds(){
-        if(muteSounds.isSelected()){
+    protected void onMuteSounds() {
+        if (muteSoundsCheckBox.isSelected()) {
             Logger.mutedSounds();
             settings.muteSounds();
-        }else {
+        } else {
             Logger.unMutedSounds();
             settings.unMuteSounds();
         }
     }
 
     //PRIVATE METHODS
+    private void setFilterListener() {
+        searchField.textProperty().addListener(observable -> {
+            currentFilter = searchField.getText();
+        });
+    }
+
     private void updateSearchFilter() {
         searchField.textProperty().addListener(observable -> {
             String filter = searchField.getText();
@@ -151,6 +148,7 @@ public class ClientSceneController {
     }
 
     private void loadUsersList() {
+        ObservableList<String> usersView = usersListView.getItems();
         if (!filterRunning) {
             client.sendMessage(ALL_USERS_COMMAND);
             refreshButton.setText(REFRESHING);
@@ -160,8 +158,9 @@ public class ClientSceneController {
                     onlineUsers = client.getOnlineUsers();
                     onlineUsers.remove(userName);
                     updateSearchFilter();
+                    setFilterListener();
                     filterRunning = true;
-                    usersListView.getItems().addAll(onlineUsers);
+                    usersView.addAll(onlineUsers);
                     refreshButton.setText(REFRESH);
                 }
             });
@@ -173,7 +172,7 @@ public class ClientSceneController {
                     onlineUsers = client.getOnlineUsers();
                     onlineUsers.remove(userName);
                     updateSearchFilter();
-                    usersListView.getItems().addAll(filteredUsers);
+                    usersView.addAll(onlineUsers);
                     refreshButton.setText(REFRESH);
                 }
             });
@@ -193,4 +192,73 @@ public class ClientSceneController {
     private String messageCommand(String receiver, String message) {
         return "/msg " + receiver + " " + message;
     }
+
+    private boolean messageCanBeSent(String receiver, String message) {
+        return receiver != null && !receiver.isBlank() && !message.isBlank();
+    }
+
+    private void handleIncomingMessage(Message messageData) {
+        String sender = messageData.getSender();
+        if (!isTabOpen(sender)) {
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    addNewTab(sender);
+                    applyMessageToTab(sender, messageData.getMessage());
+                    if (!settings.isSoundMuted()) {
+                        SoundHandler.playSound(SoundHandler.MESSAGE_INBOUND);
+                    }
+                }
+            });
+        } else {
+            if (!settings.isSoundMuted()) {
+                SoundHandler.playSound(SoundHandler.MESSAGE_IN_OPENED_TAB);
+            }
+            applyMessageToTab(sender, messageData.getMessage());
+        }
+    }
+
+    //TABS
+    private boolean isTabOpen(String sender) {
+        return openTabs.get(sender) != null;
+    }
+
+    private void addNewTab(String user) {
+        TextArea textArea = new TextArea();
+        Tab userTab = TabCreator.createTab(user, textArea);
+
+        userTab.setOnClosed(event -> openTabs.remove(user));
+        tabPane.getTabs().add(userTab);
+        openTabs.put(user, new MessagingTab(userTab, textArea));
+    }
+
+    private void applyMessageToTab(String sender, String message) {
+        openTabs.get(sender).getTextArea().appendText(message + "\n");
+    }
+
+
+/*    private ArrayList<String> getUsersByFilter() {
+        ArrayList<String> filteredUsers = new ArrayList<>();
+        searchField.textProperty().addListener(observable -> {
+            currentFilter = searchField.getText();
+            if (currentFilter == null || currentFilter.isBlank()) {
+                filteredUsers.addAll(onlineUsers);
+            } else {
+                for (String onlineUser : onlineUsers) {
+                    if (onlineUser.contains(currentFilter)) {
+                        filteredUsers.clear();
+                        filteredUsers.add(onlineUser);
+                *//*    usersView.clear();
+                    usersView.addAll(filteredUsers);*//*
+                    } else {
+                        filteredUsers.clear();
+   *//*                 usersView.clear();
+                    usersView.addAll(filteredUsers);*//*
+                    }
+                }
+            }
+            return onlineUsers;
+        });
+        return onlineUsers;
+    }*/
 }

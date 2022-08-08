@@ -14,9 +14,10 @@ import main.messageTypes.Message;
 import main.network.Client;
 import main.network.MessageListener;
 import main.network.TcpClient;
-import main.scenes.clientScene.ClientScene;
+import main.scenes.ClientScene;
 import main.controllers.LoginController;
-import main.scenes.login.LoginListener;
+import main.scenes.LoginListener;
+import main.scenes.LoginScene;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,36 +33,12 @@ public class Main extends Application {
     private ClientScene clientScene;
     private static final Settings settings = new Settings(settingsFilePath);
     private final File icon = new File("src/main/resources/icon.png");
+    private final String applicationTitle = "PogChat";
 
     public static void main(String[] args) {
         final String CONNECTION_IP = settings.getConnectionIP();
         final int CONNECTION_PORT = settings.getConnectionPort();
-
-        MessageListener messageListener = new MessageListener() {
-            @Override
-            public void onMessageReceived(Message messageData) {
-                String sender = messageData.getSender();
-                if (!clientSceneController.isTabOpen(sender)) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            clientSceneController.addNewTab(sender);
-                            clientSceneController.applyMessageToTab(sender, messageData.getMessage());
-                            if (!settings.isSoundMuted()) {
-                                SoundHandler.playSound(SoundHandler.MESSAGE_INBOUND);
-                            }
-                        }
-                    });
-                } else {
-                    if (!settings.isSoundMuted()) {
-                        SoundHandler.playSound(SoundHandler.MESSAGE_IN_OPENED_TAB);
-                    }
-                    clientSceneController.applyMessageToTab(sender, messageData.getMessage());
-                }
-            }
-        };
-        //  Scanner scan = new Scanner(System.in);
-        client = new TcpClient(CONNECTION_IP, CONNECTION_PORT, messageListener);
+        client = new TcpClient(CONNECTION_IP, CONNECTION_PORT);
         Thread clientThread = new Thread(client);
         clientThread.start();
         SubtitlesPrinter.printRegistrationRequest();
@@ -88,7 +65,7 @@ public class Main extends Application {
                             clientSceneController = clientLoader.getController();
                             clientSceneController.construct((TcpClient) client, userName,settings);
 
-                            clientScene = new ClientScene(clientLoader,icon);
+                            clientScene = new ClientScene(clientLoader,icon,applicationTitle);
                             clientScene.display();
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -105,7 +82,7 @@ public class Main extends Application {
         Image image = new Image(icon.toURI().toString());
         stage.setMinWidth(380);
         stage.setMinHeight(380);
-        stage.setTitle("PogChat");
+        stage.setTitle(applicationTitle);
         stage.getIcons().add(image);
         stage.setScene(scene);
         stage.show();

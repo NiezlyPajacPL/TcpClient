@@ -12,7 +12,7 @@
             <items>
                   <Menu mnemonicParsing="false" text="Settings">
                     <items>
-                        <CheckMenuItem fx:id="muteSounds" mnemonicParsing="false" onAction="#onMuteSounds" text="Mute sounds" />
+                        <CheckMenuItem fx:id="muteSoundsCheckBox" mnemonicParsing="false" onAction="#onMuteSounds" text="Mute sounds" />
                     </items>
                   </Menu>
                   <SeparatorMenuItem mnemonicParsing="false" />

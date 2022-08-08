@@ -8,7 +8,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import main.managers.Logger;
 import main.network.TcpClient;
-import main.scenes.login.LoginListener;
+import main.scenes.LoginListener;
 
 import static java.lang.Thread.sleep;
 
@@ -29,6 +29,8 @@ public class LoginController {
     private final String LOGIN_TOO_LONG = "Login can't exceed 20 characters";
     private final String LOST_CONNECTION = "Connection has been lost. Trying to reconnect..";
     private final String RECONNECTED = "Successfully reconnected.";
+    //BOOLEANS
+    private boolean isLoggingInInProgress = false;
 
     private String actionType = LOGIN_BUTTON_TEXT;
 
@@ -56,12 +58,13 @@ public class LoginController {
     }
 
     @FXML
-    protected void onButtonClick() {
-        if (!loginButton.getText().equals(LOGGING_IN_BUTTON_TEXT)) {
+    protected void onLoginButtonClick() {
+        if (!isLoggingInInProgress) {
             login = loginField.getText();
             password = passwordField.getText();
+            isLoggingInInProgress = true;
 
-            if (login != null && !login.equals("") && password != null && !password.equals("")) {
+            if (login != null && !login.isBlank() && password != null && !password.isBlank()) {
                 if (client.isClientConnected()) {
                     loginButton.setText(LOGGING_IN_BUTTON_TEXT);
                     if (actionType.equals(LOGIN_BUTTON_TEXT)) {
@@ -89,6 +92,7 @@ public class LoginController {
                             } else if (!client.isClientLoggedIn()) {
                                 onWrongPassword();
                             }
+                            isLoggingInInProgress = false;
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }

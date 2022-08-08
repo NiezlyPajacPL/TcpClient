@@ -26,10 +26,9 @@ public class TcpClient implements Client {
     private ArrayList<String> onlineUsers;
     private MessageListener messageListener;
 
-    public TcpClient(String ip, int port, MessageListener messageListener) {
+    public TcpClient(String ip, int port) {
         this.ip = ip;
         this.port = port;
-        this.messageListener = messageListener;
     }
 
     @Override
@@ -50,7 +49,6 @@ public class TcpClient implements Client {
                     messageListener.onMessageReceived(new Message(message.getSender(), message.getMessage()));
                 } else if (messageType instanceof UsersListReceiver) {
                     onlineUsers = ((UsersListReceiver) messageType).getUsers();
-                    //updateOnlineUsers(((UsersListReceiver) messageType).getUsers());
                 } else if (messageType instanceof Logout) {
                     SubtitlesPrinter.printReceivedMessage((((Logout) messageType).getMessage()));
                     break;
@@ -130,6 +128,10 @@ public class TcpClient implements Client {
 
     public ArrayList<String> getOnlineUsers() {
         return onlineUsers;
+    }
+
+    public void setMessageListener(MessageListener messageListener){
+        this.messageListener = messageListener;
     }
 
 }

@@ -1,4 +1,4 @@
-package main.scenes.login;
+package main.scenes;
 
 public interface LoginListener {
 

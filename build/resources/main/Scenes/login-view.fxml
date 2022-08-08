@@ -22,7 +22,7 @@
       </font>
    </Label>
     <Button fx:id="loginButton" onAction="#onButtonClick" text="Log In!" />
-   <Label fx:id="changeLoginTypeLabel" text="If you don't have account yet, register it here:">
+   <Label fx:id="changeActionTypeLabel" text="If you don't have account yet, register it here:">
       <font>
          <Font name="Calibri Italic" size="14.0" />
       </font>
