@@ -21,7 +21,7 @@
          <Font name="System Bold" size="14.0" />
       </font>
    </Label>
-    <Button fx:id="loginButton" onAction="#onButtonClick" text="Log In!" />
+    <Button fx:id="loginButton" onAction="#onLoginButtonClick" text="Log In!" />
    <Label fx:id="changeActionTypeLabel" text="If you don't have account yet, register it here:">
       <font>
          <Font name="Calibri Italic" size="14.0" />

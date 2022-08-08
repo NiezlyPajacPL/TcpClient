@@ -3,6 +3,7 @@ package main.network;
 import main.managers.JsonMapperImpl;
 import main.managers.SubtitlesPrinter;
 import main.messageTypes.*;
+import main.scenes.LoginStatusListener;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,10 +22,10 @@ public class TcpClient implements Client {
     private final int port;
     private boolean isClientLoggedIn;
     private boolean clientConnected = false;
-    public boolean messageArrived = false;
    // private ObservableList<String> onlineUsers = FXCollections.observableArrayList();
     private ArrayList<String> onlineUsers;
     private MessageListener messageListener;
+    private LoginStatusListener loginStatusListener;
 
     public TcpClient(String ip, int port) {
         this.ip = ip;
@@ -42,9 +43,9 @@ public class TcpClient implements Client {
                 messageType = jsonMapper.mapJson(json);
 
                 if (messageType instanceof Login) {
-                    System.out.println("Received login status");
-                    messageArrived = true;
                     isClientLoggedIn = ((Login) messageType).isLoginSuccessful();
+                    System.out.println("Received login status");
+                    loginStatusListener.onLoginStatusReceived();
                 } else if (messageType instanceof Message message) {
                     messageListener.onMessageReceived(new Message(message.getSender(), message.getMessage()));
                 } else if (messageType instanceof UsersListReceiver) {
@@ -54,7 +55,7 @@ public class TcpClient implements Client {
                     break;
                 } else if (messageType instanceof Register) {
                     System.out.println("Received login status");
-                    messageArrived = true;
+                    loginStatusListener.onLoginStatusReceived();
                     isClientLoggedIn = ((Register) messageType).isLoginSuccessful();
                 }
             } else {
@@ -134,4 +135,7 @@ public class TcpClient implements Client {
         this.messageListener = messageListener;
     }
 
+    public void setLoginStatusListener(LoginStatusListener loginStatusListener) {
+        this.loginStatusListener = loginStatusListener;
+    }
 }

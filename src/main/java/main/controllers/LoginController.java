@@ -9,6 +9,7 @@ import javafx.scene.control.TextField;
 import main.managers.Logger;
 import main.network.TcpClient;
 import main.scenes.LoginListener;
+import main.scenes.LoginStatusListener;
 
 import static java.lang.Thread.sleep;
 
@@ -37,6 +38,21 @@ public class LoginController {
     private TcpClient client;
     private LoginListener loginListener;
 
+    public void construct(TcpClient client, LoginListener loginListener) {
+        this.client = client;
+        this.loginListener = loginListener;
+        client.setLoginStatusListener(new LoginStatusListener() {
+            @Override
+            public void onLoginStatusReceived() {
+                if (client.isClientLoggedIn()) {
+                    onSuccessfullyLogged();
+                } else if (!client.isClientLoggedIn()) {
+                    onWrongPassword();
+                }
+            }
+        });
+    }
+
     @FXML
     protected Button switchRegisterButton;
     @FXML
@@ -51,11 +67,6 @@ public class LoginController {
     protected PasswordField passwordField;
     @FXML
     protected TextField loginField;
-
-    public void construct(TcpClient client, LoginListener loginListener) {
-        this.client = client;
-        this.loginListener = loginListener;
-    }
 
     @FXML
     protected void onLoginButtonClick() {
@@ -73,35 +84,7 @@ public class LoginController {
                         client.sendMessage(getRegisterCommand());
                     }
                 }
-                Thread thread = new Thread(() -> {
-                    while (true) {
-                        Logger.loginAttempt();
-                        if (client.messageArrived) {
-                            client.messageArrived = false;
-                            break;
-                        }
-                    }
-                });
-                Thread loginThread = new Thread(() -> {
-                    if (client.isClientConnected()) {
-                        try {
-                            thread.start();
-                            thread.join();
-                            if (client.isClientLoggedIn()) {
-                                onSuccessfullyLogged();
-                            } else if (!client.isClientLoggedIn()) {
-                                onWrongPassword();
-                            }
-                            isLoggingInInProgress = false;
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        onConnectionLost();
-                    }
-                });
-                loginThread.start();
-            }else if(login != null && login.length() < 20){
+            } else if (login != null && login.length() < 20) {
                 Platform.runLater(() -> {
                     somethingWentWrong.setText(LOGIN_TOO_LONG);
                 });
