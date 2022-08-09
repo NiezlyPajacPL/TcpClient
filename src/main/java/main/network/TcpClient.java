@@ -1,7 +1,7 @@
 package main.network;
 
 import main.managers.JsonMapperImpl;
-import main.managers.SubtitlesPrinter;
+import main.managers.console.ConsolePrinter;
 import main.messageTypes.*;
 import main.scenes.LoginStatusListener;
 
@@ -53,7 +53,7 @@ public class TcpClient implements Client {
                     onlineUsers = ((UsersListReceiver) messageType).getUsers();
                     messageListener.onUsersListReceived();
                 } else if (messageType instanceof Logout) {
-                    SubtitlesPrinter.printReceivedMessage((((Logout) messageType).getMessage()));
+                    ConsolePrinter.printReceivedMessage((((Logout) messageType).getMessage()));
                     break;
                 } else if (messageType instanceof Register) {
                     System.out.println("Received register status");
@@ -69,11 +69,11 @@ public class TcpClient implements Client {
     private void connect(String ip, int port) {
         try {
             clientSocket = new Socket(ip, port);
-            SubtitlesPrinter.printConnectionEstablished();
+            ConsolePrinter.printConnectionEstablished();
             clientConnected = true;
         } catch (IOException e) {
-            SubtitlesPrinter.printConnectionProblems();
-            SubtitlesPrinter.printReconnectingUnsuccessful();
+            ConsolePrinter.printConnectionProblems();
+            ConsolePrinter.printReconnectingUnsuccessful();
             try {
                 sleep(5000);
                 connect(ip, port);
@@ -90,7 +90,7 @@ public class TcpClient implements Client {
             serverReceivedJSON = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             return jsonMapper.mapJson(serverReceivedJSON.readLine());
         } catch (IOException e) {
-            SubtitlesPrinter.printLostConnection();
+            ConsolePrinter.printLostConnection();
             isClientLoggedIn = false;
             clientConnected = false;
             connect(ip, port);

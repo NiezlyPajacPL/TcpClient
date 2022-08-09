@@ -10,6 +10,7 @@ public class ClientScene {
     private final FXMLLoader fxmlLoader;
     private final Image applicationIcon;
     private final String applicationTitle;
+    private final Stage window = new Stage();
 
     public ClientScene(FXMLLoader fxmlLoader,Image applicationIcon,String applicationTitle) {
         this.fxmlLoader = fxmlLoader;
@@ -18,7 +19,6 @@ public class ClientScene {
     }
 
     public void display() {
-        Stage window = new Stage();
         window.initModality(Modality.APPLICATION_MODAL);
         window.setTitle(applicationTitle);
         window.getIcons().add(applicationIcon);

@@ -20,11 +20,12 @@ public class MessageJsonDeserializer implements JsonDeserializer<MessageType> {
     private final String SENDER = "sender";
     private final String IS_LOGIN_SUCCESSFUL = "isLoginSuccessful";
     private final String IS_REGISTRATION_SUCCESSFUL = "isRegistrationSuccessful";
+    private final String TYPE = "type";
 
     @Override
     public MessageType deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         JsonObject jsonObject = json.getAsJsonObject();
-        String type = jsonObject.get("type").getAsString();
+        String type = jsonObject.get(TYPE).getAsString();
 
         if (Objects.equals(type, REGISTER_TYPE)) {
             return new Register(jsonObject.get(IS_REGISTRATION_SUCCESSFUL).getAsBoolean());

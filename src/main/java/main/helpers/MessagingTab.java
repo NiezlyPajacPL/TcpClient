@@ -5,8 +5,8 @@ import javafx.scene.control.TextArea;
 
 public class MessagingTab {
 
-   private Tab tab;
-   private TextArea textArea;
+   private final Tab tab;
+   private final TextArea textArea;
 
     public MessagingTab(Tab tab, TextArea textArea){
         this.tab = tab;

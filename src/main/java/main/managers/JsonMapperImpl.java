@@ -6,7 +6,7 @@ import main.messageTypes.*;
 
 public class JsonMapperImpl implements JsonMapper {
 
-    private Gson gson = new GsonBuilder()
+    private final Gson gson = new GsonBuilder()
             .registerTypeAdapter(MessageType.class, new MessageJsonDeserializer())
             .setPrettyPrinting()
             .create();

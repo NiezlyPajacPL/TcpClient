@@ -6,8 +6,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import main.helpers.MessagingTab;
 import main.helpers.TabCreator;
-import main.managers.Logger;
 import main.managers.SoundHandler;
+import main.managers.console.ConsolePrinter;
 import main.managers.settings.Settings;
 import main.messageTypes.Message;
 import main.network.MessageListener;
@@ -20,7 +20,7 @@ public class ClientSceneController {
     //const
     private final String ALL_USERS_COMMAND = "/allUsers";
     private final String LOGOUT = "/logout";
-
+    //construct
     private TcpClient client;
     private Settings settings;
     private String userName;
@@ -54,7 +54,7 @@ public class ClientSceneController {
 
             @Override
             public void onLogout() {
-                Logger.loggingOut();
+                ConsolePrinter.loggingOut();
                 Platform.exit();
             }
         });
@@ -87,7 +87,7 @@ public class ClientSceneController {
     @FXML
     protected void handleMouseClick() {
         String user = usersListView.getSelectionModel().getSelectedItem();
-        Logger.clickedOnUser(user);
+        ConsolePrinter.clickedOnUser(user);
         if (newTabCanBeOpened(user)) {
             addNewTab(user);
         }
@@ -112,10 +112,10 @@ public class ClientSceneController {
     @FXML
     protected void onMuteSounds() {
         if (muteSoundsCheckBox.isSelected()) {
-            Logger.mutedSounds();
+            ConsolePrinter.mutedSounds();
             settings.muteSounds();
         } else {
-            Logger.unMutedSounds();
+            ConsolePrinter.unMutedSounds();
             settings.unMuteSounds();
         }
     }

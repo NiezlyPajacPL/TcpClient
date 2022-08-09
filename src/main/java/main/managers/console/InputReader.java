@@ -1,13 +1,11 @@
-package main.helpers;
+package main.managers.console;
 
-import main.managers.SubtitlesPrinter;
 import main.network.Client;
 import java.util.Scanner;
 
 public class InputReader extends Thread {
     private final Scanner scan;
     private final Client client;
-    private SubtitlesPrinter subtitlesPrinter;
     private final String HELP = "/help";
     private final String LOGOUT = "/logout";
 
@@ -18,11 +16,11 @@ public class InputReader extends Thread {
 
     @Override
     public void run() {
-        MessageHelper messageHelper = new MessageHelper(subtitlesPrinter);
+        MessageHelper messageHelper = new MessageHelper();
         while (true) {
             String message = scan.nextLine();
             if (message.contains(HELP)) {
-                SubtitlesPrinter.printHelper();
+                ConsolePrinter.printHelper();
             } else if (message.contains(LOGOUT)) {
                 client.sendMessage(message);
                 break;
@@ -31,7 +29,7 @@ public class InputReader extends Thread {
             }
         }
 
-        SubtitlesPrinter.printBye();
+        ConsolePrinter.printBye();
         client.stopConnection();
     }
 }

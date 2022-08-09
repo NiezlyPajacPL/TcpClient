@@ -8,7 +8,7 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import main.controllers.ClientSceneController;
 import main.managers.SoundHandler;
-import main.managers.SubtitlesPrinter;
+import main.managers.console.ConsolePrinter;
 import main.managers.settings.Settings;
 import main.network.Client;
 import main.network.TcpClient;
@@ -20,14 +20,17 @@ import java.io.File;
 import java.io.IOException;
 
 public class Main extends Application {
-    private final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/scenes/login-view.fxml"));
+    private static Client client;
+    //SCENES
+    private final FXMLLoader loginLoader = new FXMLLoader(getClass().getResource("/scenes/login-view.fxml"));
     private final FXMLLoader clientLoader = new FXMLLoader(ClientScene.class.getResource("/scenes/main-view.fxml"));
-    private static final String settingsFilePath = "src/main/resources/settings/settings.txt";
     private LoginController loginController;
     private static ClientSceneController clientSceneController;
-    private static Client client;
     private ClientScene clientScene;
+    //SETTINGS
+    private static final String settingsFilePath = "src/main/resources/settings/settings.txt";
     private static final Settings settings = new Settings(settingsFilePath);
+    //IMAGE AND TITLE
     private final Image applicationIcon = new Image(new File("src/main/resources/icon.png").toURI().toString());
     private final String applicationTitle = "PogChat";
 
@@ -37,8 +40,8 @@ public class Main extends Application {
         client = new TcpClient(CONNECTION_IP, CONNECTION_PORT);
         Thread clientThread = new Thread(client);
         clientThread.start();
-        SubtitlesPrinter.printRegistrationRequest();
-        SubtitlesPrinter.printIsHelpNeeded();
+        ConsolePrinter.printRegistrationRequest();
+        ConsolePrinter.printIsHelpNeeded();
 
         launch();
         System.exit(0);
@@ -46,35 +49,31 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        Scene scene = new Scene(fxmlLoader.load());
-        loginController = fxmlLoader.getController();
-        LoginListener loginListener = new LoginListener() {
+        Scene scene = new Scene(loginLoader.load());
+        loginController = loginLoader.getController();
+        loginController.construct((TcpClient) client, new LoginListener() {
             @Override
             public void onClientLoggedIn() {
                 String userName = loginController.getUserName();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        stage.close();
-                        try {
-                            clientLoader.load();
-                            clientSceneController = clientLoader.getController();
-                            clientSceneController.construct((TcpClient) client, userName, settings);
+                Platform.runLater(() -> {
+                    stage.close();
+                    try {
+                        clientLoader.load();
+                        clientSceneController = clientLoader.getController();
+                        clientSceneController.construct((TcpClient) client, userName, settings);
 
-                            clientScene = new ClientScene(clientLoader,applicationIcon,applicationTitle);
-                            clientScene.display();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                        clientScene = new ClientScene(clientLoader,applicationIcon,applicationTitle);
+                        clientScene.display();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 });
                 if (!settings.isSoundMuted()) {
                     SoundHandler.playSound(SoundHandler.CONNECTED);
                 }
             }
-        };
+        });
 
-        loginController.construct((TcpClient) client, loginListener);
         stage.setMinWidth(380);
         stage.setMinHeight(380);
         stage.setTitle(applicationTitle);

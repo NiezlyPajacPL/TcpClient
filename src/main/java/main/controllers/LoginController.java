@@ -6,7 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import main.managers.Logger;
+import main.managers.console.ConsolePrinter;
 import main.network.TcpClient;
 import main.scenes.LoginListener;
 import main.scenes.LoginStatusListener;
@@ -66,6 +66,7 @@ public class LoginController {
     protected void onLoginButtonClick() {
         if(client.isClientConnected()){
             if (!isLoggingInInProgress) {
+                ConsolePrinter.loginAttempt();
                 login = loginField.getText();
                 password = passwordField.getText();
                 isLoggingInInProgress = true;
@@ -122,7 +123,7 @@ public class LoginController {
     }
 
     private void onSuccessfullyLogged() {
-        Logger.loggedIn();
+        ConsolePrinter.loggedIn();
         loginListener.onClientLoggedIn();
         Platform.runLater(() -> {
             passwordField.setText("");

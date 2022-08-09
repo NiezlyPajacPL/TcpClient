@@ -1,6 +1,4 @@
-package main.helpers;
-
-import main.managers.SubtitlesPrinter;
+package main.managers.console;
 
 import java.nio.charset.StandardCharsets;
 
@@ -8,12 +6,6 @@ public class MessageHelper {
     private final String REGISTER_COMMAND = "/register";
     private final String LOGIN_COMMAND = "/login";
     private final String MESSAGE_COMMAND = "/msg";
-
-    private SubtitlesPrinter subtitlesPrinter;
-
-    public MessageHelper(SubtitlesPrinter subtitlesPrinter){
-        this.subtitlesPrinter = subtitlesPrinter;
-    }
 
     public boolean messageCanBeSent(String input, boolean isClientLoggedIn) {
         return commandCanBeSent(input) && !disableLoginAttempt(input, isClientLoggedIn) && !messageIsTooLarge(input);
@@ -28,7 +20,7 @@ public class MessageHelper {
     private boolean messageIsTooLarge(String input) {
         byte[] array = input.getBytes(StandardCharsets.UTF_8);
         if (input.length() >= 200000) {
-            SubtitlesPrinter.printErrorMessageTooLarge();
+            ConsolePrinter.printErrorMessageTooLarge();
             return true;
         }
         return false;
@@ -39,7 +31,7 @@ public class MessageHelper {
         } else if (!isClientLoggedIn && message.contains(REGISTER_COMMAND) || !isClientLoggedIn && message.contains(LOGIN_COMMAND)) {
             return false;
         }
-        SubtitlesPrinter.printErrorSomethingWentWrong();
+        ConsolePrinter.printErrorSomethingWentWrong();
         return true;
     }
 
