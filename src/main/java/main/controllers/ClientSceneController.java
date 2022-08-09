@@ -12,6 +12,7 @@ import main.managers.settings.Settings;
 import main.messageTypes.Message;
 import main.network.MessageListener;
 import main.network.TcpClient;
+
 import java.util.*;
 
 public class ClientSceneController {
@@ -21,17 +22,20 @@ public class ClientSceneController {
     private final String LOGOUT = "/logout";
 
     private TcpClient client;
+    private Settings settings;
+    private String userName;
+
     private ArrayList<String> onlineUsers;
     private final Map<String, MessagingTab> openTabs = new HashMap<>();
-    private String userName;
-    private Settings settings;
-    private boolean isRefreshingInProgress = false;
     private String currentFilter;
+    private boolean isRefreshingInProgress = false;
+
 
     public void construct(TcpClient client, String userName, Settings settings) {
         this.client = client;
         this.userName = userName;
         this.settings = settings;
+
         setFilterListener();
         client.sendMessage(ALL_USERS_COMMAND);
         if (settings.isSoundMuted()) {
@@ -84,7 +88,6 @@ public class ClientSceneController {
     protected void handleMouseClick() {
         String user = usersListView.getSelectionModel().getSelectedItem();
         Logger.clickedOnUser(user);
-
         if (newTabCanBeOpened(user)) {
             addNewTab(user);
         }
@@ -96,7 +99,7 @@ public class ClientSceneController {
         String message = messageTextArea.getText();
         if (messageCanBeSent(receiver, message)) {
             client.sendMessage(messageCommand(receiver, message));
-            openTabs.get(receiver).getTextArea().appendText(userName + ": " + message + "\n");
+            applyMessageToTab(receiver,(userName + ": " + message));
             messageTextArea.clear();
         }
     }
@@ -117,7 +120,7 @@ public class ClientSceneController {
         }
     }
 
-    //PRIVATE METHODS
+    //FILTER
     private void setFilterListener() {
         searchField.textProperty().addListener(observable -> {
             currentFilter = searchField.getText();
@@ -128,12 +131,9 @@ public class ClientSceneController {
     private void onFilterChanged() {
         ObservableList<String> usersView = usersListView.getItems();
         if (currentFilter.isBlank()) {
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    usersView.clear();
-                    usersView.addAll(onlineUsers);
-                }
+            Platform.runLater(() -> {
+                usersView.clear();
+                usersView.addAll(onlineUsers);
             });
         } else {
             ArrayList<String> filteredUsers = new ArrayList<>();
@@ -141,12 +141,9 @@ public class ClientSceneController {
                 if (onlineUser.contains(currentFilter)) {
                     filteredUsers.add(onlineUser);
                 }
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        usersView.clear();
-                        usersView.addAll(filteredUsers);
-                    }
+                Platform.runLater(() -> {
+                    usersView.clear();
+                    usersView.addAll(filteredUsers);
                 });
             }
         }
@@ -158,9 +155,19 @@ public class ClientSceneController {
         usersListView.getItems().addAll(onlineUsers);
     }
 
+    //TABS
+    private void addNewTab(String user) {
+        TextArea textArea = new TextArea();
+        Tab userTab = TabCreator.createTab(user, textArea);
+
+        userTab.setOnClosed(event -> openTabs.remove(user));
+        tabPane.getTabs().add(userTab);
+        openTabs.put(user, new MessagingTab(userTab, textArea));
+    }
+
     private void handleIncomingMessage(Message messageData) {
         String sender = messageData.getSender();
-        if (newTabCanBeOpened(userName)) {
+        if (newTabCanBeOpened(sender)) {
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
@@ -179,21 +186,6 @@ public class ClientSceneController {
         }
     }
 
-    //TABS
-
-    private boolean newTabCanBeOpened(String user){
-        return user!=null && !user.isBlank() && openTabs.get(user) == null;
-    }
-
-    private void addNewTab(String user) {
-        TextArea textArea = new TextArea();
-        Tab userTab = TabCreator.createTab(user, textArea);
-
-        userTab.setOnClosed(event -> openTabs.remove(user));
-        tabPane.getTabs().add(userTab);
-        openTabs.put(user, new MessagingTab(userTab, textArea));
-    }
-
     private void applyMessageToTab(String sender, String message) {
         openTabs.get(sender).getTextArea().appendText(message + "\n");
     }
@@ -206,12 +198,16 @@ public class ClientSceneController {
         }
         return null;
     }
+    private boolean newTabCanBeOpened(String user) {
+        return user != null && !user.isBlank() && openTabs.get(user) == null;
+    }
 
+    //
     private String messageCommand(String receiver, String message) {
         return "/msg " + receiver + " " + message;
     }
 
     private boolean messageCanBeSent(String receiver, String message) {
-        return receiver != null && !receiver.isBlank() && !message.isBlank();
+        return receiver != null && !receiver.isBlank() && !message.isBlank() && message.length() < 120;
     }
 }

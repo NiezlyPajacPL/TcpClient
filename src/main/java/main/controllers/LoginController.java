@@ -11,9 +11,6 @@ import main.network.TcpClient;
 import main.scenes.LoginListener;
 import main.scenes.LoginStatusListener;
 
-import static java.lang.Thread.sleep;
-
-
 public class LoginController {
 
     private String login;
@@ -55,8 +52,6 @@ public class LoginController {
     @FXML
     protected Button switchRegisterButton;
     @FXML
-    public Label connectionProblems;
-    @FXML
     protected Label changeActionTypeLabel;
     @FXML
     protected Label somethingWentWrong;
@@ -69,26 +64,32 @@ public class LoginController {
 
     @FXML
     protected void onLoginButtonClick() {
-        if (!isLoggingInInProgress) {
-            login = loginField.getText();
-            password = passwordField.getText();
-            isLoggingInInProgress = true;
+        if(client.isClientConnected()){
+            if (!isLoggingInInProgress) {
+                login = loginField.getText();
+                password = passwordField.getText();
+                isLoggingInInProgress = true;
 
-            if(isLoginTooLong()){
-                Platform.runLater(() -> {
-                    somethingWentWrong.setText(LOGIN_TOO_LONG);
-                });
-            } else if (loginAndPasswordCanBeSend()) {
-                if (client.isClientConnected()) {
-                    loginButton.setText(LOGGING_IN_BUTTON_TEXT);
-                    if (actionType.equals(LOGIN_BUTTON_TEXT)) {
-                        client.sendMessage(getLoginCommand());
-                    } else if (actionType.equals(REGISTER_BUTTON_TEXT)) {
-                        client.sendMessage(getRegisterCommand());
+                if(isLoginTooLong()){
+                    Platform.runLater(() -> {
+                        somethingWentWrong.setText(LOGIN_TOO_LONG);
+                    });
+                } else if (loginAndPasswordCanBeSend()) {
+                    if (client.isClientConnected()) {
+                        loginButton.setText(LOGGING_IN_BUTTON_TEXT);
+                        if (actionType.equals(LOGIN_BUTTON_TEXT)) {
+                            client.sendMessage(getLoginCommand());
+                        } else if (actionType.equals(REGISTER_BUTTON_TEXT)) {
+                            client.sendMessage(getRegisterCommand());
+                        }
                     }
                 }
+                isLoggingInInProgress = false;
             }
-            isLoggingInInProgress = false;
+        }else {
+            Platform.runLater(() -> {
+                somethingWentWrong.setText(LOST_CONNECTION);
+            });
         }
     }
 
@@ -107,7 +108,6 @@ public class LoginController {
         }
 
     }
-
 
     public String getUserName() {
         return login;

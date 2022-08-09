@@ -21,9 +21,15 @@ public class Settings {
     public Settings(String filePath) {
         this.filePath = filePath;
         file = new File(filePath);
-        if (isSettingsEmpty()) {
-            System.out.println("Settings file was empty. Settings has been set to default.");
-            setToDefault();
+        try {
+            if (file.createNewFile()) {
+                System.out.println("Settings file created successfully.");
+            } else if (isSettingsEmpty()) {
+                System.out.println("Settings file was empty. Settings has been set to default.");
+                setToDefault();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

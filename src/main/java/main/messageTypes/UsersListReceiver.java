@@ -16,7 +16,7 @@ public class UsersListReceiver extends MessageType {
         if (users != null) {
 
             //Iterating JSON array
-            for (int i=0;i<users.size();i++){
+            for (int i = 0; i < users.size(); i++) {
 
                 //Adding each element of JSON array into ArrayList
                 usersList.add(users.get(i).getAsString());

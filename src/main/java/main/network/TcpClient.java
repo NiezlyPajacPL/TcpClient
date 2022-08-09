@@ -15,19 +15,21 @@ import java.util.ArrayList;
 import static java.lang.Thread.sleep;
 
 public class TcpClient implements Client {
-    private Socket clientSocket;
-    private PrintWriter serverPrintWriter;
-    private BufferedReader serverReceivedJSON;
+    //CONNECTION
     private final String ip;
     private final int port;
+    private Socket clientSocket;
     private boolean isClientLoggedIn;
     private boolean clientConnected = false;
-    // private ObservableList<String> onlineUsers = FXCollections.observableArrayList();
-    private ArrayList<String> onlineUsers;
+    //RECEIVING AND SENDING
+    private PrintWriter serverPrintWriter;
+    private BufferedReader serverReceivedJSON;
+    //LISTENERS
     private MessageListener messageListener;
     private LoginStatusListener loginStatusListener;
-    JsonMapperImpl jsonMapper = new JsonMapperImpl();
-    MessageType messageType;
+    //OTHERS
+    private ArrayList<String> onlineUsers;
+    private final JsonMapperImpl jsonMapper = new JsonMapperImpl();
 
     public TcpClient(String ip, int port) {
         this.ip = ip;
@@ -39,7 +41,7 @@ public class TcpClient implements Client {
         connect(ip, port);
         while (true) {
             if (!clientSocket.isClosed()) {
-                messageType = receiveMessage();
+                MessageType messageType = receiveMessage();
 
                 if (messageType instanceof Login) {
                     isClientLoggedIn = ((Login) messageType).isLoginSuccessful();
@@ -54,7 +56,7 @@ public class TcpClient implements Client {
                     SubtitlesPrinter.printReceivedMessage((((Logout) messageType).getMessage()));
                     break;
                 } else if (messageType instanceof Register) {
-                    System.out.println("Received login status");
+                    System.out.println("Received register status");
                     isClientLoggedIn = ((Register) messageType).isLoginSuccessful();
                     loginStatusListener.onLoginStatusReceived();
                 }

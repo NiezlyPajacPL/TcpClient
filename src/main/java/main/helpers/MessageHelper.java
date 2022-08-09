@@ -5,11 +5,11 @@ import main.managers.SubtitlesPrinter;
 import java.nio.charset.StandardCharsets;
 
 public class MessageHelper {
-    private final String REGISTER = "/register";
-    private final String LOGIN = "/login";
-    private final String MESSAGE = "/msg";
+    private final String REGISTER_COMMAND = "/register";
+    private final String LOGIN_COMMAND = "/login";
+    private final String MESSAGE_COMMAND = "/msg";
 
-    SubtitlesPrinter subtitlesPrinter;
+    private SubtitlesPrinter subtitlesPrinter;
 
     public MessageHelper(SubtitlesPrinter subtitlesPrinter){
         this.subtitlesPrinter = subtitlesPrinter;
@@ -20,7 +20,7 @@ public class MessageHelper {
     }
 
     private boolean commandCanBeSent(String input) {
-        if (input.contains(REGISTER) || input.contains(LOGIN) || input.contains(MESSAGE)) {
+        if (input.contains(REGISTER_COMMAND) || input.contains(LOGIN_COMMAND) || input.contains(MESSAGE_COMMAND)) {
             return checkIfInputLengthMatchesExpected(3, input);
         }
         return true;
@@ -34,9 +34,9 @@ public class MessageHelper {
         return false;
     }
     private boolean disableLoginAttempt(String message, boolean isClientLoggedIn) {
-        if ((isClientLoggedIn && !message.contains(REGISTER) && !message.contains(LOGIN))) {
+        if ((isClientLoggedIn && !message.contains(REGISTER_COMMAND) && !message.contains(LOGIN_COMMAND))) {
             return false;
-        } else if (!isClientLoggedIn && message.contains(REGISTER) || !isClientLoggedIn && message.contains(LOGIN)) {
+        } else if (!isClientLoggedIn && message.contains(REGISTER_COMMAND) || !isClientLoggedIn && message.contains(LOGIN_COMMAND)) {
             return false;
         }
         SubtitlesPrinter.printErrorSomethingWentWrong();

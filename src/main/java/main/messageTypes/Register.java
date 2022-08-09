@@ -1,6 +1,6 @@
 package main.messageTypes;
 
-public class Register extends MessageType{
+public class Register extends MessageType {
     private final boolean isLoginSuccessful;
 
     public Register(boolean isLoginSuccessful) {

@@ -10,18 +10,14 @@ import main.controllers.ClientSceneController;
 import main.managers.SoundHandler;
 import main.managers.SubtitlesPrinter;
 import main.managers.settings.Settings;
-import main.messageTypes.Message;
 import main.network.Client;
-import main.network.MessageListener;
 import main.network.TcpClient;
 import main.scenes.ClientScene;
 import main.controllers.LoginController;
 import main.scenes.LoginListener;
-import main.scenes.LoginScene;
 
 import java.io.File;
 import java.io.IOException;
-
 
 public class Main extends Application {
     private final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/scenes/login-view.fxml"));
@@ -63,7 +59,7 @@ public class Main extends Application {
                         try {
                             clientLoader.load();
                             clientSceneController = clientLoader.getController();
-                            clientSceneController.construct((TcpClient) client, userName,settings);
+                            clientSceneController.construct((TcpClient) client, userName, settings);
 
                             clientScene = new ClientScene(clientLoader,applicationIcon,applicationTitle);
                             clientScene.display();

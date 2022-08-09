@@ -11,7 +11,6 @@ public class SettingsObj {
         connectionIP = "109.207.149.50";
         port = 4446;
     }
-
     public boolean isSoundsDisabled() {
         return disableSounds;
     }
