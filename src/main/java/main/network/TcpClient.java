@@ -17,15 +17,17 @@ import static java.lang.Thread.sleep;
 public class TcpClient implements Client {
     private Socket clientSocket;
     private PrintWriter serverPrintWriter;
-    private BufferedReader serverReceivedInput;
+    private BufferedReader serverReceivedJSON;
     private final String ip;
     private final int port;
     private boolean isClientLoggedIn;
     private boolean clientConnected = false;
-   // private ObservableList<String> onlineUsers = FXCollections.observableArrayList();
+    // private ObservableList<String> onlineUsers = FXCollections.observableArrayList();
     private ArrayList<String> onlineUsers;
     private MessageListener messageListener;
     private LoginStatusListener loginStatusListener;
+    JsonMapperImpl jsonMapper = new JsonMapperImpl();
+    MessageType messageType;
 
     public TcpClient(String ip, int port) {
         this.ip = ip;
@@ -35,12 +37,9 @@ public class TcpClient implements Client {
     @Override
     public void run() {
         connect(ip, port);
-        JsonMapperImpl jsonMapper = new JsonMapperImpl();
-        MessageType messageType;
         while (true) {
             if (!clientSocket.isClosed()) {
-                String json = receiveMessage();
-                messageType = jsonMapper.mapJson(json);
+                messageType = receiveMessage();
 
                 if (messageType instanceof Login) {
                     isClientLoggedIn = ((Login) messageType).isLoginSuccessful();
@@ -56,8 +55,8 @@ public class TcpClient implements Client {
                     break;
                 } else if (messageType instanceof Register) {
                     System.out.println("Received login status");
-                    loginStatusListener.onLoginStatusReceived();
                     isClientLoggedIn = ((Register) messageType).isLoginSuccessful();
+                    loginStatusListener.onLoginStatusReceived();
                 }
             } else {
                 break;
@@ -75,7 +74,7 @@ public class TcpClient implements Client {
             SubtitlesPrinter.printReconnectingUnsuccessful();
             try {
                 sleep(5000);
-                connect(ip,port);
+                connect(ip, port);
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
             }
@@ -83,16 +82,16 @@ public class TcpClient implements Client {
     }
 
     @Override
-    public String receiveMessage() {
+    public MessageType receiveMessage() {
         try {
             //Waiting for server input
-            serverReceivedInput = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            return serverReceivedInput.readLine();
+            serverReceivedJSON = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            return jsonMapper.mapJson(serverReceivedJSON.readLine());
         } catch (IOException e) {
             SubtitlesPrinter.printLostConnection();
             isClientLoggedIn = false;
             clientConnected = false;
-            connect(ip,port);
+            connect(ip, port);
         }
         return null;
     }
@@ -110,7 +109,7 @@ public class TcpClient implements Client {
     @Override
     public void stopConnection() {
         try {
-            serverReceivedInput.close();
+            serverReceivedJSON.close();
             serverPrintWriter.close();
             clientSocket.close();
         } catch (IOException e) {
@@ -132,7 +131,7 @@ public class TcpClient implements Client {
         return onlineUsers;
     }
 
-    public void setMessageListener(MessageListener messageListener){
+    public void setMessageListener(MessageListener messageListener) {
         this.messageListener = messageListener;
     }
 

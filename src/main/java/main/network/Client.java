@@ -1,10 +1,12 @@
 package main.network;
 
+import main.messageTypes.MessageType;
+
 public interface Client extends Runnable {
 
     void sendMessage(String message);
 
-    String receiveMessage();
+    MessageType receiveMessage();
 
     void stopConnection();
 

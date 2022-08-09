@@ -29,7 +29,6 @@ public class LoginController {
     private final String WRONG_PASSWORD = "Wrong username or password.";
     private final String LOGIN_TOO_LONG = "Login can't exceed 20 characters";
     private final String LOST_CONNECTION = "Connection has been lost. Trying to reconnect..";
-    private final String RECONNECTED = "Successfully reconnected.";
     //BOOLEANS
     private boolean isLoggingInInProgress = false;
 
@@ -75,7 +74,11 @@ public class LoginController {
             password = passwordField.getText();
             isLoggingInInProgress = true;
 
-            if (login != null && !login.isBlank() && password != null && !password.isBlank()) {
+            if(isLoginTooLong()){
+                Platform.runLater(() -> {
+                    somethingWentWrong.setText(LOGIN_TOO_LONG);
+                });
+            } else if (loginAndPasswordCanBeSend()) {
                 if (client.isClientConnected()) {
                     loginButton.setText(LOGGING_IN_BUTTON_TEXT);
                     if (actionType.equals(LOGIN_BUTTON_TEXT)) {
@@ -84,11 +87,8 @@ public class LoginController {
                         client.sendMessage(getRegisterCommand());
                     }
                 }
-            } else if (login != null && login.length() < 20) {
-                Platform.runLater(() -> {
-                    somethingWentWrong.setText(LOGIN_TOO_LONG);
-                });
             }
+            isLoggingInInProgress = false;
         }
     }
 
@@ -140,16 +140,11 @@ public class LoginController {
         });
     }
 
-    private void onConnectionLost() {
-        Platform.runLater(() -> {
-            if (!somethingWentWrong.getText().equals(LOST_CONNECTION)) {
-                somethingWentWrong.setText(LOST_CONNECTION);
-            }
-        });
+    private boolean isLoginTooLong(){
+        return login != null && login.length() > 20;
     }
 
-/*    private void onConnectionRenewed() {
-        somethingWentWrong.setText(RECONNECTED);
-        somethingWentWrong.setTextFill(GREEN);
-    }*/
+    private boolean loginAndPasswordCanBeSend(){
+        return login != null && !login.isBlank() && password != null && !password.isBlank();
+    }
 }
