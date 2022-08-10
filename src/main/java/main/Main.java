@@ -78,7 +78,7 @@ public class Main extends Application {
         stage.setScene(scene);
         stage.show();
     }
-
+    //asd
     private void displayClientScene(){
         Stage window = new Stage();
         window.initModality(Modality.APPLICATION_MODAL);
