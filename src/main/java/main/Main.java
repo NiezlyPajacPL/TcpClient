@@ -5,6 +5,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import main.controllers.ClientSceneController;
 import main.managers.SoundHandler;
@@ -12,9 +13,8 @@ import main.managers.console.ConsolePrinter;
 import main.managers.settings.Settings;
 import main.network.Client;
 import main.network.TcpClient;
-import main.scenes.ClientScene;
 import main.controllers.LoginController;
-import main.scenes.LoginListener;
+import main.helpers.Listeners.LoginListener;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,10 +23,9 @@ public class Main extends Application {
     private static Client client;
     //SCENES
     private final FXMLLoader loginLoader = new FXMLLoader(getClass().getResource("/scenes/login-view.fxml"));
-    private final FXMLLoader clientLoader = new FXMLLoader(ClientScene.class.getResource("/scenes/main-view.fxml"));
+    private final FXMLLoader clientLoader = new FXMLLoader(getClass().getResource("/scenes/main-view.fxml"));
     private LoginController loginController;
     private static ClientSceneController clientSceneController;
-    private ClientScene clientScene;
     //SETTINGS
     private static final String settingsFilePath = "src/main/resources/settings/settings.txt";
     private static final Settings settings = new Settings(settingsFilePath);
@@ -61,9 +60,7 @@ public class Main extends Application {
                         clientLoader.load();
                         clientSceneController = clientLoader.getController();
                         clientSceneController.construct((TcpClient) client, userName, settings);
-
-                        clientScene = new ClientScene(clientLoader,applicationIcon,applicationTitle);
-                        clientScene.display();
+                        displayClientScene();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -80,5 +77,20 @@ public class Main extends Application {
         stage.getIcons().add(applicationIcon);
         stage.setScene(scene);
         stage.show();
+    }
+
+    private void displayClientScene(){
+        Stage window = new Stage();
+        window.initModality(Modality.APPLICATION_MODAL);
+        window.setTitle(applicationTitle);
+        window.getIcons().add(applicationIcon);
+        window.setMinWidth(600);
+        window.setMinHeight(450);
+        window.setMaxWidth(640);
+        window.setMaxHeight(500);
+
+        Scene scene = new Scene(clientLoader.getRoot());
+        window.setScene(scene);
+        window.show();
     }
 }

@@ -10,7 +10,7 @@ import main.managers.SoundHandler;
 import main.managers.console.ConsolePrinter;
 import main.managers.settings.Settings;
 import main.messageTypes.Message;
-import main.network.MessageListener;
+import main.helpers.Listeners.ServerResponseListener;
 import main.network.TcpClient;
 
 import java.util.*;
@@ -41,7 +41,7 @@ public class ClientSceneController {
         if (settings.isSoundMuted()) {
             muteSoundsCheckBox.setSelected(true);
         }
-        client.setMessageListener(new MessageListener() {
+        client.addMessageListener(new ServerResponseListener() {
             @Override
             public void onMessageReceived(Message messageData) {
                 handleIncomingMessage(messageData);
@@ -99,7 +99,7 @@ public class ClientSceneController {
         String message = messageTextArea.getText();
         if (messageCanBeSent(receiver, message)) {
             client.sendMessage(messageCommand(receiver, message));
-            applyMessageToTab(receiver,(userName + ": " + message));
+            applyMessageToTab(receiver, (userName + ": " + message));
             messageTextArea.clear();
         }
     }
@@ -152,7 +152,7 @@ public class ClientSceneController {
     private void addOnlineUsersToListView() {
         onlineUsers = client.getOnlineUsers();
         onlineUsers.remove(userName);
-        usersListView.getItems().addAll(onlineUsers);
+        Platform.runLater(() -> usersListView.getItems().addAll(onlineUsers));
     }
 
     //TABS
@@ -198,6 +198,7 @@ public class ClientSceneController {
         }
         return null;
     }
+
     private boolean newTabCanBeOpened(String user) {
         return user != null && !user.isBlank() && openTabs.get(user) == null;
     }

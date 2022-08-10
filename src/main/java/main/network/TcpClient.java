@@ -1,9 +1,10 @@
 package main.network;
 
+import main.helpers.Listeners.ServerResponseListener;
 import main.managers.JsonMapperImpl;
 import main.managers.console.ConsolePrinter;
 import main.messageTypes.*;
-import main.scenes.LoginStatusListener;
+import main.helpers.Listeners.LoginStatusListener;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,8 +26,9 @@ public class TcpClient implements Client {
     private PrintWriter serverPrintWriter;
     private BufferedReader serverReceivedJSON;
     //LISTENERS
-    private MessageListener messageListener;
-    private LoginStatusListener loginStatusListener;
+    private final ArrayList<ServerResponseListener> responseListeners = new ArrayList<>();
+    private final ArrayList<LoginStatusListener> loginStatusListeners = new ArrayList<>();
+  //  private LoginStatusListener loginStatusListener;
     //OTHERS
     private ArrayList<String> onlineUsers;
     private final JsonMapperImpl jsonMapper = new JsonMapperImpl();
@@ -44,21 +46,27 @@ public class TcpClient implements Client {
                 MessageType messageType = receiveMessage();
 
                 if (messageType instanceof Login) {
-                    isClientLoggedIn = ((Login) messageType).isLoginSuccessful();
                     System.out.println("Received login status");
-                    loginStatusListener.onLoginStatusReceived();
+                    for(LoginStatusListener loginStatusListener : loginStatusListeners){
+                        loginStatusListener.onLoginStatusReceived(((Login) messageType).isLoginSuccessful());
+                    }
                 } else if (messageType instanceof Message message) {
-                    messageListener.onMessageReceived(new Message(message.getSender(), message.getMessage()));
+                    for (ServerResponseListener responseListener : responseListeners) {
+                        responseListener.onMessageReceived(new Message(message.getSender(), message.getMessage()));
+                    }
                 } else if (messageType instanceof UsersListReceiver) {
                     onlineUsers = ((UsersListReceiver) messageType).getUsers();
-                    messageListener.onUsersListReceived();
+                    for (ServerResponseListener responseListener : responseListeners) {
+                        responseListener.onUsersListReceived();
+                    }
                 } else if (messageType instanceof Logout) {
                     ConsolePrinter.printReceivedMessage((((Logout) messageType).getMessage()));
                     break;
                 } else if (messageType instanceof Register) {
                     System.out.println("Received register status");
-                    isClientLoggedIn = ((Register) messageType).isLoginSuccessful();
-                    loginStatusListener.onLoginStatusReceived();
+                    for(LoginStatusListener loginStatusListener : loginStatusListeners){
+                        loginStatusListener.onLoginStatusReceived(((Register) messageType).isLoginSuccessful());
+                    }
                 }
             } else {
                 break;
@@ -133,11 +141,12 @@ public class TcpClient implements Client {
         return onlineUsers;
     }
 
-    public void setMessageListener(MessageListener messageListener) {
-        this.messageListener = messageListener;
+    public void addMessageListener(ServerResponseListener serverResponseListener){
+        responseListeners.add(serverResponseListener);
     }
 
     public void setLoginStatusListener(LoginStatusListener loginStatusListener) {
-        this.loginStatusListener = loginStatusListener;
+        loginStatusListeners.add(loginStatusListener);
     }
+
 }

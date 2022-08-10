@@ -1,8 +1,8 @@
-package main.network;
+package main.helpers.Listeners;
 
 import main.messageTypes.Message;
 
-public interface MessageListener {
+public interface ServerResponseListener {
     void onMessageReceived(Message messageData);
 
     void onUsersListReceived();

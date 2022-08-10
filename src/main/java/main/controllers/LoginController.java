@@ -8,8 +8,8 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import main.managers.console.ConsolePrinter;
 import main.network.TcpClient;
-import main.scenes.LoginListener;
-import main.scenes.LoginStatusListener;
+import main.helpers.Listeners.LoginListener;
+import main.helpers.Listeners.LoginStatusListener;
 
 public class LoginController {
 
@@ -39,10 +39,10 @@ public class LoginController {
         this.loginListener = loginListener;
         client.setLoginStatusListener(new LoginStatusListener() {
             @Override
-            public void onLoginStatusReceived() {
-                if (client.isClientLoggedIn()) {
+            public void onLoginStatusReceived(boolean isLogged) {
+                if (isLogged) {
                     onSuccessfullyLogged();
-                } else if (!client.isClientLoggedIn()) {
+                } else {
                     onWrongPassword();
                 }
             }
