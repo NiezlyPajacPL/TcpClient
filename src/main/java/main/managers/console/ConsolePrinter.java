@@ -17,9 +17,21 @@ public final class ConsolePrinter {
 
     public static void loggedIn(){println("Log: Client logged in, closing login thread.");}
 
+    //SETTINGS
+
+    public static void createdSettingsFile(){println("Settings file created successfully.");}
+
+    public static void emptySettings(){println("Settings file was empty. Settings has been set to default.");}
 
     //OTHERS
-    public static void printErrorMessageTooLarge(){print("Your message is too long.");}
+
+    public static void cantFindFile(String fileLocation){println("Can't find file" + fileLocation);}
+
+    public static void printReceivedLoginStatus(){println("Received login status");}
+
+    public static void printReceivedRegistrationStatus(){println("Received registration status");}
+
+    public static void printErrorMessageTooLarge(){println("Your message is too long.");}
 
     public static void printReceivedMessage(String message){println(message);}
 

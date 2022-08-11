@@ -1,5 +1,7 @@
 package main.managers;
 
+import main.managers.console.ConsolePrinter;
+
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -21,7 +23,7 @@ public class SoundHandler {
                 clip.start();
 
             } else {
-                System.out.println("Can't find file" + voiceLocation);
+                ConsolePrinter.cantFindFile(voiceLocation);
             }
         } catch (Exception ex) {
             ex.printStackTrace();

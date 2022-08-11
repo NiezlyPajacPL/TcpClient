@@ -29,7 +29,6 @@ public class TcpClient implements Client {
     //LISTENERS
     private final ArrayList<ServerResponseListener> responseListeners = new ArrayList<>();
     private final ArrayList<LoginStatusListener> loginStatusListeners = new ArrayList<>();
-  //  private LoginStatusListener loginStatusListener;
     //OTHERS
     private ArrayList<String> onlineUsers;
     private final JsonMapperImpl jsonMapper = new JsonMapperImpl();
@@ -47,7 +46,7 @@ public class TcpClient implements Client {
                 MessageType messageType = receiveMessage();
 
                 if (messageType instanceof Login) {
-                    System.out.println("Received login status");
+                    ConsolePrinter.printReceivedLoginStatus();
                     for(LoginStatusListener loginStatusListener : loginStatusListeners){
                         loginStatusListener.onLoginStatusReceived(((Login) messageType).isLoginSuccessful());
                     }
@@ -64,7 +63,7 @@ public class TcpClient implements Client {
                     ConsolePrinter.printReceivedMessage((((Logout) messageType).getMessage()));
                     break;
                 } else if (messageType instanceof Register) {
-                    System.out.println("Received register status");
+                    ConsolePrinter.printReceivedRegistrationStatus();
                     for(LoginStatusListener loginStatusListener : loginStatusListeners){
                         loginStatusListener.onLoginStatusReceived(((Register) messageType).isLoginSuccessful());
                     }

@@ -7,7 +7,6 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 import main.controllers.ClientSceneController;
 import main.managers.SoundHandler;
 import main.managers.console.ConsolePrinter;
@@ -18,7 +17,6 @@ import main.controllers.LoginController;
 import main.helpers.Listeners.LoginListener;
 
 import java.io.File;
-import java.io.IOException;
 
 public class Main extends Application {
     private static Client client;

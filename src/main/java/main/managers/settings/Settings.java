@@ -3,29 +3,27 @@ package main.managers.settings;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
+import main.managers.console.ConsolePrinter;
 
 import java.io.*;
 
 public class Settings {
 
-    private Gson gson = new GsonBuilder()
+    private final Gson gson = new GsonBuilder()
             .setPrettyPrinting()
             .create();
 
-    private String filePath;
-    private File file;
+    private final File file;
     private FileWriter fileWriter;
-    private FileReader settings;
     private SettingsObj settingsObj;
 
     public Settings(String filePath) {
-        this.filePath = filePath;
         file = new File(filePath);
         try {
             if (file.createNewFile()) {
-                System.out.println("Settings file created successfully.");
+                ConsolePrinter.createdSettingsFile();
             } else if (isSettingsEmpty()) {
-                System.out.println("Settings file was empty. Settings has been set to default.");
+                ConsolePrinter.emptySettings();
                 setToDefault();
             }
         } catch (IOException e) {
@@ -73,7 +71,6 @@ public class Settings {
         }
     }
 
-    //
     public void setToDefault() {
         try {
             fileWriter = new FileWriter(file);
