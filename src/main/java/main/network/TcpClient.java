@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -76,7 +77,7 @@ public class TcpClient implements Client {
 
     private void connect(String ip, int port) {
         try {
-            clientSocket = new Socket(ip, port);
+            clientSocket = new Socket(InetAddress.getByName(ip), port);
             ConsolePrinter.printConnectionEstablished();
             clientConnected = true;
         } catch (IOException e) {
