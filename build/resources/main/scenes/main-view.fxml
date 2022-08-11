@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane minHeight="400.0" minWidth="550.0" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.controllers.ClientSceneController">
+   <top>
+      <MenuBar maxHeight="-Infinity" minHeight="-Infinity" minWidth="-Infinity" BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="Menu">
+            <items>
+                  <Menu mnemonicParsing="false" text="Settings">
+                    <items>
+                        <CheckMenuItem fx:id="muteSoundsCheckBox" mnemonicParsing="false" onAction="#onMuteSounds" text="Mute sounds" />
+                    </items>
+                  </Menu>
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#menuOnLogout" text="Logout" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="To start conversation, simply click on the user from the list or search for him in the searchbox." />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+   <center>
+      <TabPane fx:id="tabPane" tabClosingPolicy="SELECTED_TAB" BorderPane.alignment="CENTER" />
+   </center>
+   <left>
+      <VBox maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+         <children>
+            <TextField fx:id="searchField" blendMode="MULTIPLY" promptText="Search...">
+               <font>
+                  <Font name="System Bold Italic" size="12.0" />
+               </font></TextField>
+            <ListView fx:id="usersListView" blendMode="DARKEN" editable="true" maxHeight="-Infinity" maxWidth="-Infinity" onMouseClicked="#handleMouseClick" />
+            <Button fx:id="refreshButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onRefresh" prefHeight="25.0" prefWidth="140.0" text="Refresh" />
+         </children>
+      </VBox>
+   </left>
+   <bottom>
+      <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="50.0" minWidth="550.0" BorderPane.alignment="CENTER">
+         <children>
+            <TextArea fx:id="messageTextArea" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="53.0" prefWidth="543.0" promptText="Type your message here..." />
+            <Button mnemonicParsing="false" onAction="#onSendButtonClicked" prefHeight="53.0" prefWidth="58.0" text="SEND" />
+         </children>
+      </HBox>
+   </bottom>
+</BorderPane>
