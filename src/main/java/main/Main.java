@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import main.controllers.ClientSceneController;
 import main.managers.SoundHandler;
 import main.managers.console.ConsolePrinter;
@@ -26,6 +27,7 @@ public class Main extends Application {
     private final FXMLLoader clientLoader = new FXMLLoader(getClass().getResource("/scenes/main-view.fxml"));
     private LoginController loginController;
     private static ClientSceneController clientSceneController;
+
     //SETTINGS
     private static final String settingsFilePath = "src/main/resources/settings/settings.txt";
     private static final Settings settings = new Settings(settingsFilePath);
@@ -47,50 +49,48 @@ public class Main extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
-        Scene scene = new Scene(loginLoader.load());
+    public void start(Stage loginWindow) throws Exception {
+        Stage clientWindow = new Stage();
+        Scene loginScene = new Scene(loginLoader.load());
+        Scene clientScene = new Scene(clientLoader.load());
+
         loginController = loginLoader.getController();
         loginController.construct((TcpClient) client, new LoginListener() {
             @Override
             public void onClientLoggedIn() {
                 String userName = loginController.getUserName();
                 Platform.runLater(() -> {
-                    stage.close();
-                    try {
-                        clientLoader.load();
-                        clientSceneController = clientLoader.getController();
-                        clientSceneController.construct((TcpClient) client, userName, settings);
-                        displayClientScene();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    loginWindow.close();
+                    clientSceneController = clientLoader.getController();
+                    clientSceneController.construct((TcpClient) client, userName, settings);
+                    displayClientWindow(clientWindow,clientScene);
                 });
                 if (!settings.isSoundMuted()) {
                     SoundHandler.playSound(SoundHandler.CONNECTED);
                 }
             }
         });
-
-        stage.setMinWidth(380);
-        stage.setMinHeight(380);
-        stage.setTitle(applicationTitle);
-        stage.getIcons().add(applicationIcon);
-        stage.setScene(scene);
-        stage.show();
+        displayLoginWindow(loginWindow,loginScene);
     }
 
-    private void displayClientScene(){
-        Stage window = new Stage();
-        window.initModality(Modality.APPLICATION_MODAL);
-        window.setTitle(applicationTitle);
-        window.getIcons().add(applicationIcon);
-        window.setMinWidth(600);
-        window.setMinHeight(450);
-        window.setMaxWidth(640);
-        window.setMaxHeight(500);
+    private void displayClientWindow(Stage clientWindow, Scene clientScene){
+        clientWindow.initModality(Modality.APPLICATION_MODAL);
+        clientWindow.setTitle(applicationTitle);
+        clientWindow.getIcons().add(applicationIcon);
+        clientWindow.setMinWidth(600);
+        clientWindow.setMinHeight(450);
+        clientWindow.setMaxWidth(640);
+        clientWindow.setMaxHeight(500);
+        clientWindow.setScene(clientScene);
+        clientWindow.show();
+    }
 
-        Scene scene = new Scene(clientLoader.getRoot());
-        window.setScene(scene);
-        window.show();
+    private void displayLoginWindow(Stage loginWindow,Scene loginScene){
+        loginWindow.setMinWidth(380);
+        loginWindow.setMinHeight(380);
+        loginWindow.setTitle(applicationTitle);
+        loginWindow.getIcons().add(applicationIcon);
+        loginWindow.setScene(loginScene);
+        loginWindow.show();
     }
 }
